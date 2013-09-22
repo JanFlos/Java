@@ -1,0 +1,5 @@
+com.instantiations.assist.eclipse.javadoc.AddAuthorTagStyle=3
+com.instantiations.assist.eclipse.javadoc.AddVersionTagStyle=3
+com.instantiations.assist.eclipse.javadoc.KnownMethodTags=deprecated,exception,generated,generatedBy,param,post,pre,return,see,serialData,since,throws
+core.javadoc.pref.copy=true
+eclipse.preferences.version=1

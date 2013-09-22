@@ -1,0 +1,3 @@
+autoExecTests=false
+eclipse.preferences.version=1
+paneBehavior=com.instantiations.assist.eclipse.junit.editor.tabbedSourceFirst

@@ -1,0 +1,24 @@
+package dml;
+
+public class TableColumn {
+
+	String fName;
+	int	  fType;
+	
+	public TableColumn(String pName, int pType) {
+		fName = pName.toLowerCase();
+		fType = pType;
+	}
+
+	public String getName() {
+		return fName;
+	}
+
+	public int getType() {
+		return fType;
+	}
+
+
+	
+	
+}

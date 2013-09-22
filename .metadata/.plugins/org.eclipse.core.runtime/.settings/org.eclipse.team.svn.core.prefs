@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+externalMigrateFromAuthorizationDatabase/isMigrated=true
+migrateFromAuthorizationDatabase/isMigrated=true
+repositories/002ef6209e60001213a3acb13ed7ceef=002ef6209e60001213a3acb13ed7ceef;http\://rdslinux19.robotron.de/svn/RDS_RCP/;http\://rdslinux19.robotron.de/svn/RDS_RCP/;branches;tags;trunk;true;1af72a70-ddcc-0410-a3c3-d758b7e8d4f7;http\://rdslinux19.robotron.de/svn/RDS_RCP;;false;<http\://rdslinux19.robotron.de\:80> robotron.de\: Benutzername/Passwort eingeben\!;;0
+repositories/90a33e0e8160001213a3acb13ed7ceef=90a33e0e8160001213a3acb13ed7ceef;http\://rdslinux19.robotron.de/svn/EE_RCP/;http\://rdslinux19.robotron.de/svn/EE_RCP/;branches;tags;trunk;true;d58c756e-ddcc-0410-9bc9-dfcc56b5982a;http\://rdslinux19.robotron.de/svn/EE_RCP;;false;<http\://rdslinux19.robotron.de\:80> robotron.de\: Benutzername/Passwort eingeben\!;;0

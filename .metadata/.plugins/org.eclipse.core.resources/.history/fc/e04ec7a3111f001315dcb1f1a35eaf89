@@ -1,0 +1,26 @@
+package dml;
+
+public class TableColumn {
+
+    private String _name;
+    private int    _type;
+    private int _displaySize;
+	
+    public TableColumn(String name, int type, int displaySize) {
+        _name = name.toLowerCase();
+        _type = type;
+        _displaySize = displaySize;
+	}
+
+	public String getName() {
+        return _name;
+	}
+
+	public int getType() {
+        return _type;
+	}
+
+
+	
+	
+}

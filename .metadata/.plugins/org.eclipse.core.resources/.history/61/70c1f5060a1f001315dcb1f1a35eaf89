@@ -1,0 +1,40 @@
+/**
+ * 
+ */
+package h2;
+
+import constants.DataSourceTypeEnum;
+import dml.Metadata;
+
+
+/**
+ * @author Jan Flos
+ * 
+ */
+public class QueryDataSource {
+
+    private String             _queryDataSource;
+    private DataSourceTypeEnum _datasourceType;
+    private String             _dmlTarget;
+
+    public QueryDataSource(String dataSource, String dmlTarget) {
+
+        _datasourceType = DataSourceTypeEnum.FROM_QUERY_CLAUSE;
+
+        if (_queryDataSource.matches("^[a-zA-Z]\\S*$"))
+            _datasourceType = DataSourceTypeEnum.TABLE;
+
+        if (_datasourceType == DataSourceTypeEnum.TABLE  && _dmlTarget == null)
+            _dmlTarget = _queryDataSource;
+    }
+
+    /**
+     * @return
+     */
+    public Metadata getMetadata() {
+        Metadata = new Metadata(tableName, tableColumns)
+        
+        return null;
+    }
+
+}
