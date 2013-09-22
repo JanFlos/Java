@@ -1,0 +1,13 @@
+/** 
+ * Copyright (c) Robotron Datenbanksoftware GmbH and/or its affiliates. All rights reserved.
+ */
+package h2;
+
+
+/**
+ * @author Jan Flos
+ *
+ */
+public class RecordSerector {
+
+}
