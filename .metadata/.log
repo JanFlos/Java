@@ -10540,3 +10540,87 @@ Caused by: java.io.IOException: Proces nemuže pracovat se souborem, nebot jiný
 	at org.eclipse.jgit.internal.storage.file.ObjectDirectoryInserter.insert(ObjectDirectoryInserter.java:100)
 	at org.eclipse.jgit.api.AddCommand.call(AddCommand.java:184)
 	... 8 more
+
+!ENTRY org.eclipse.egit.ui 4 0 2013-09-22 18:52:15.249
+!MESSAGE git@github.com:JanFlos/Java.git: Auth fail
+!STACK 0
+org.eclipse.jgit.api.errors.TransportException: git@github.com:JanFlos/Java.git: Auth fail
+	at org.eclipse.jgit.api.FetchCommand.call(FetchCommand.java:137)
+	at org.eclipse.jgit.api.PullCommand.call(PullCommand.java:245)
+	at org.eclipse.egit.core.op.PullOperation$1.run(PullOperation.java:90)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2345)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2327)
+	at org.eclipse.egit.core.op.PullOperation.execute(PullOperation.java:121)
+	at org.eclipse.egit.ui.internal.pull.PullOperationUI.execute(PullOperationUI.java:115)
+	at org.eclipse.egit.ui.internal.pull.PullOperationUI$1.run(PullOperationUI.java:90)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:53)
+Caused by: org.eclipse.jgit.errors.TransportException: git@github.com:JanFlos/Java.git: Auth fail
+	at org.eclipse.jgit.transport.JschConfigSessionFactory.getSession(JschConfigSessionFactory.java:142)
+	at org.eclipse.jgit.transport.SshTransport.getSession(SshTransport.java:121)
+	at org.eclipse.jgit.transport.TransportGitSsh$SshFetchConnection.<init>(TransportGitSsh.java:248)
+	at org.eclipse.jgit.transport.TransportGitSsh.openFetch(TransportGitSsh.java:147)
+	at org.eclipse.jgit.transport.FetchProcess.executeImp(FetchProcess.java:136)
+	at org.eclipse.jgit.transport.FetchProcess.execute(FetchProcess.java:122)
+	at org.eclipse.jgit.transport.Transport.fetch(Transport.java:1105)
+	at org.eclipse.jgit.api.FetchCommand.call(FetchCommand.java:128)
+	... 8 more
+Caused by: com.jcraft.jsch.JSchException: Auth fail
+	at com.jcraft.jsch.Session.connect(Session.java:482)
+	at org.eclipse.jgit.transport.JschConfigSessionFactory.getSession(JschConfigSessionFactory.java:116)
+	... 15 more
+
+!ENTRY org.eclipse.egit.ui 4 0 2013-09-22 18:54:09.952
+!MESSAGE git@github.com:JanFlos/Java.git: Auth fail
+!STACK 0
+org.eclipse.jgit.api.errors.TransportException: git@github.com:JanFlos/Java.git: Auth fail
+	at org.eclipse.jgit.api.FetchCommand.call(FetchCommand.java:137)
+	at org.eclipse.jgit.api.PullCommand.call(PullCommand.java:245)
+	at org.eclipse.egit.core.op.PullOperation$1.run(PullOperation.java:90)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2345)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2327)
+	at org.eclipse.egit.core.op.PullOperation.execute(PullOperation.java:121)
+	at org.eclipse.egit.ui.internal.pull.PullOperationUI.execute(PullOperationUI.java:115)
+	at org.eclipse.egit.ui.internal.pull.PullOperationUI$1.run(PullOperationUI.java:90)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:53)
+Caused by: org.eclipse.jgit.errors.TransportException: git@github.com:JanFlos/Java.git: Auth fail
+	at org.eclipse.jgit.transport.JschConfigSessionFactory.getSession(JschConfigSessionFactory.java:142)
+	at org.eclipse.jgit.transport.SshTransport.getSession(SshTransport.java:121)
+	at org.eclipse.jgit.transport.TransportGitSsh$SshFetchConnection.<init>(TransportGitSsh.java:248)
+	at org.eclipse.jgit.transport.TransportGitSsh.openFetch(TransportGitSsh.java:147)
+	at org.eclipse.jgit.transport.FetchProcess.executeImp(FetchProcess.java:136)
+	at org.eclipse.jgit.transport.FetchProcess.execute(FetchProcess.java:122)
+	at org.eclipse.jgit.transport.Transport.fetch(Transport.java:1105)
+	at org.eclipse.jgit.api.FetchCommand.call(FetchCommand.java:128)
+	... 8 more
+Caused by: com.jcraft.jsch.JSchException: Auth fail
+	at com.jcraft.jsch.Session.connect(Session.java:482)
+	at org.eclipse.jgit.transport.JschConfigSessionFactory.getSession(JschConfigSessionFactory.java:116)
+	... 15 more
+
+!ENTRY org.eclipse.egit.ui 4 0 2013-09-22 18:54:26.248
+!MESSAGE git@github.com:JanFlos/Java.git: Auth fail
+!STACK 0
+org.eclipse.jgit.api.errors.TransportException: git@github.com:JanFlos/Java.git: Auth fail
+	at org.eclipse.jgit.api.FetchCommand.call(FetchCommand.java:137)
+	at org.eclipse.jgit.api.PullCommand.call(PullCommand.java:245)
+	at org.eclipse.egit.core.op.PullOperation$1.run(PullOperation.java:90)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2345)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2327)
+	at org.eclipse.egit.core.op.PullOperation.execute(PullOperation.java:121)
+	at org.eclipse.egit.ui.internal.pull.PullOperationUI.execute(PullOperationUI.java:115)
+	at org.eclipse.egit.ui.internal.pull.PullOperationUI$1.run(PullOperationUI.java:90)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:53)
+Caused by: org.eclipse.jgit.errors.TransportException: git@github.com:JanFlos/Java.git: Auth fail
+	at org.eclipse.jgit.transport.JschConfigSessionFactory.getSession(JschConfigSessionFactory.java:142)
+	at org.eclipse.jgit.transport.SshTransport.getSession(SshTransport.java:121)
+	at org.eclipse.jgit.transport.TransportGitSsh$SshFetchConnection.<init>(TransportGitSsh.java:248)
+	at org.eclipse.jgit.transport.TransportGitSsh.openFetch(TransportGitSsh.java:147)
+	at org.eclipse.jgit.transport.FetchProcess.executeImp(FetchProcess.java:136)
+	at org.eclipse.jgit.transport.FetchProcess.execute(FetchProcess.java:122)
+	at org.eclipse.jgit.transport.Transport.fetch(Transport.java:1105)
+	at org.eclipse.jgit.api.FetchCommand.call(FetchCommand.java:128)
+	... 8 more
+Caused by: com.jcraft.jsch.JSchException: Auth fail
+	at com.jcraft.jsch.Session.connect(Session.java:482)
+	at org.eclipse.jgit.transport.JschConfigSessionFactory.getSession(JschConfigSessionFactory.java:116)
+	... 15 more
