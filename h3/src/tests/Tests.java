@@ -86,6 +86,10 @@ public class Tests {
 
     }
 
+    private void nextTest2() {
+
+    }
+
     private Metadata getDMLMetadata(boolean returningCols) {
         if (returningCols)
             return new Metadata("ttest",
