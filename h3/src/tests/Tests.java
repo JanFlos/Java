@@ -12,30 +12,37 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.EventBus;
 import dml.CommandBuilder;
 import dml.Metadata;
 import dml.TableColumn;
 
 public class Tests {
 
-    private static Connection _connection;
+    private static ApplicationContext _appContext;
 
-    public Connection getConnection() {
-        return _connection;
-    }
 
     @BeforeClass
-    public static void initConnection() throws ClassNotFoundException, SQLException {
-        if (_connection == null)
+    public static void setUp() throws ClassNotFoundException, SQLException {
+        if (_appContext == null) {
+            _appContext = new ApplicationContext();
+
             Class.forName("oracle.jdbc.OracleDriver");
-        System.setProperty("oracle.net.tns_admin",
-                           "c:\\Oracle\\Dev10g\\NETWORK\\ADMIN");
-        _connection = DriverManager.getConnection("jdbc:oracle:thin:@ece", "ec_calc", "calc");
+
+            /* 
+            System.setProperty("oracle.net.tns_admin", "c:\\Oracle\\Dev10g\\NETWORK\\ADMIN");
+            _connection = DriverManager.getConnection("jdbc:oracle:thin:@ece", "ec_calc", "calc");
+            */
+            Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@//vm/ecr4pres", "ec_calc", "calc");
+
+            _appContext.setConnection(connection);
+            _appContext.setEventBus(new EventBus());
+        }
     }
 
     @AfterClass
-    public static void closeConnection() throws SQLException {
-        _connection.close();
+    public static void tearDown() throws SQLException {
+        _appContext.done();
     }
 
     @Ignore
@@ -63,16 +70,17 @@ public class Tests {
     @Test
     public void test() throws SQLException {
         QueryDataSource queryDataSource = new QueryDataSource("TTEST");
-        Metadata metadata = new Metadata(_connection, queryDataSource);
+        Metadata metadata = new Metadata(_appContext.getConnection(), queryDataSource);
         List<String> pkCols = metadata.getPrimaryKeyColumns();
 
     }
 
 
+    @Ignore
     @Test
     public void dataBlockTest() throws SQLException {
 
-        DataBlock dataBlock = DataBlock.createDataBlock(_connection, "TTEST");
+        DataBlock dataBlock = DataBlock.createDataBlock(_appContext, "TTEST");
         dataBlock.createRecord();
         dataBlock.setItems(null, "Test", 1, "kuna", 25);
         dataBlock.post();
@@ -81,14 +89,13 @@ public class Tests {
 
     }
 
-    private void nextTest() {
-        // change
+    @Test
+    public void queryTest() throws SQLException {
+        DataBlock dataBlock = DataBlock.createDataBlock(_appContext, "TTEST");
+        int recordCount = dataBlock.executeQuery();
+        System.out.println(recordCount);
 
     }
-
-
-
-
 
     private Metadata getDMLMetadata(boolean returningCols) {
         if (returningCols)

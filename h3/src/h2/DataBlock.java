@@ -6,10 +6,12 @@ package h2;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import tests.ApplicationContext;
 import com.google.common.collect.Lists;
 import dml.Metadata;
 import dml.Record;
 import dml.RecordSaver;
+import dml.RecordSelector;
 
 /**
  * @author Jan Flos
@@ -27,6 +29,7 @@ public class DataBlock {
     private List<Record>        _records;
     private Record              _currentRecord;
     private RecordSaver         _recordSaver;
+    private RecordSelector      _recordSelector;
 
     /**
     * 
@@ -50,6 +53,7 @@ public class DataBlock {
         _queryDataSource = new QueryDataSource(dataSource, dmlTarget);
         _metadata = new Metadata(connection, _queryDataSource);
         _recordSaver = new RecordSaver(connection, _metadata);
+        _recordSelector = new RecordSelector(connection, _metadata);
 
     }
 
@@ -129,9 +133,9 @@ public class DataBlock {
         return result;
     }
 
-    public static DataBlock createDataBlock(Connection connection, String tableName) throws SQLException {
+    public static DataBlock createDataBlock(ApplicationContext appContext, String tableName) throws SQLException {
         DataBlock result = new DataBlock();
-        result.setDataSource(connection, tableName);
+        result.setDataSource(appContext.getConnection(), tableName);
         return result;
     }
 
@@ -145,6 +149,19 @@ public class DataBlock {
             setItem(j, objects[j]);
         }
 
+    }
+
+    /**
+     * @return 
+     * @throws SQLException 
+     * 
+     */
+    public int executeQuery() throws SQLException {
+        assert _recordSelector != null;
+        
+        _records = _recordSelector.executeQuery();
+        return _records.size();
+        
     }
 
 }

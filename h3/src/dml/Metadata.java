@@ -30,6 +30,7 @@ public class Metadata {
     private final Map<String, Integer> _columnTypes;
     private List<String>         _primaryKeyColumns;
     private final List<String>         _updateableColumns;
+    private String                     _queryDataSource;
 
     /**
      * Constructor method
@@ -110,7 +111,8 @@ public class Metadata {
         assert queryDataSource != null;
         assert queryDataSource.getDMLTarget() != null;
 
-        List<TableColumn> sourceTableColumns = findTableColumns(connection, queryDataSource.getQueryDataSource());        // Find all columns for data source query
+        _queryDataSource = queryDataSource.getQueryDataSource();
+        List<TableColumn> sourceTableColumns = findTableColumns(connection, _queryDataSource);        // Find all columns for data source query
 
         _tableName = queryDataSource.getDMLTarget();
         _columns = getColumnNames(sourceTableColumns);
@@ -288,6 +290,13 @@ public class Metadata {
      */
     public int getColumnCount() {
         return _columns.size();
+    }
+
+    /**
+     * @return
+     */
+    public String getDataSource() {
+        return _queryDataSource;
     }
 
 }

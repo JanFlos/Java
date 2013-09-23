@@ -17,7 +17,7 @@ public class Record {
     Object[]			_data;
 	RecordStatusEnum	_status;
 
-	private Record(Object[] data) {
+    public Record(Object[] data) {
 		this(data, RecordStatusEnum.QUERY);
 	}
 
@@ -29,7 +29,8 @@ public class Record {
 		_status = status;
 	}
 
-	public Object[] getData() {
+
+    public Object[] getData() {
 		return _data;
 	}
 
