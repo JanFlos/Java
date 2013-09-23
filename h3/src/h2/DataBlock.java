@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.List;
 import tests.ApplicationContext;
 import com.google.common.collect.Lists;
+import com.google.common.eventbus.Subscribe;
 import dml.Metadata;
 import dml.Record;
 import dml.RecordSaver;
@@ -30,6 +31,8 @@ public class DataBlock {
     private Record              _currentRecord;
     private RecordSaver         _recordSaver;
     private RecordSelector      _recordSelector;
+    private List<Relation>      _detailBlocks;
+    private List<Relation>      _masterBlocks;
 
     /**
     * 
@@ -127,9 +130,11 @@ public class DataBlock {
 
     }
 
-    public static DataBlock createDataBlock(Connection connection, String queryDataSource, String dmlTarget) throws SQLException {
+    public static DataBlock createDataBlock(ApplicationContext appContext, String queryDataSource, String dmlTarget) throws SQLException {
         DataBlock result = new DataBlock();
-        result.setDataSource(connection, queryDataSource, dmlTarget);
+        result.setDataSource(appContext.getConnection(), queryDataSource, dmlTarget);
+        appContext.getEventBus().register(result); // Register the datablock on event bus
+
         return result;
     }
 
@@ -151,6 +156,11 @@ public class DataBlock {
 
     }
 
+    @Subscribe
+    public void masterChanged() {
+
+    }
+
     /**
      * @return 
      * @throws SQLException 
@@ -158,10 +168,47 @@ public class DataBlock {
      */
     public int executeQuery() throws SQLException {
         assert _recordSelector != null;
-        
+
         _records = _recordSelector.executeQuery();
         return _records.size();
+
+    }
+
+    /**
+    * @param detail
+    * @param joinCondition
+    */
+    public void addDetailBlock(DataBlock detail, String joinCondition) {
+
+        assert detail != null;
+        assert joinCondition != null;
+
+        if (_detailBlocks == null)
+            _detailBlocks = Lists.newArrayList();
         
+
+        _detailBlocks.add(new Relation(detail, joinCondition));
+
+        detail.addMasterBlock(this, joinCondition);
+    }
+
+    /**
+     * @param dataBlock
+     */
+    private void addMasterBlock(DataBlock dataBlock, String joinCondition) {
+        if (_masterBlocks == null)
+            _masterBlocks = Lists.newArrayList();
+
+        _masterBlocks.add(new Relation(dataBlock, joinCondition));
+
+    }
+
+    /**
+     * Jump to first selected record 
+     */
+    public void firstRecord() {
+        // TODO Auto-generated method stub
+
     }
 
 }

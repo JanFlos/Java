@@ -89,12 +89,22 @@ public class Tests {
 
     }
 
+    @Ignore
     @Test
     public void queryTest() throws SQLException {
         DataBlock dataBlock = DataBlock.createDataBlock(_appContext, "TTEST");
         int recordCount = dataBlock.executeQuery();
         System.out.println(recordCount);
 
+    }
+
+    @Test
+    public void queryMasterDetailTest() throws SQLException {
+        DataBlock master = DataBlock.createDataBlock(_appContext, "DB1", "TTEST");
+        DataBlock detail = DataBlock.createDataBlock(_appContext, "DB2", "TTS_DETAIL");
+
+        master.addDetailBlock(detail, "TTS_ID = @ID");
+        master.firstRecord(); // jump on first selected record causes detail datablock to refresh
     }
 
     private Metadata getDMLMetadata(boolean returningCols) {
