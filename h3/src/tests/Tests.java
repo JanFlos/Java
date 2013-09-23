@@ -88,9 +88,7 @@ public class Tests {
 
 
 
-    private void nextTest3() {
 
-    }
 
     private Metadata getDMLMetadata(boolean returningCols) {
         if (returningCols)
