@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="application"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="singleton-global"
+            thread="main"
+            visible="true">
+         <run
+               class="cz.robotron.jdbc.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         id="jdbc"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="cz.robotron.jdbc.application"
+            name="application">
+         <property
+               name="appName"
+               value="application">
+         </property>
+      </product>
+   </extension>
+
+</plugin>
