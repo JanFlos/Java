@@ -1,5 +1,5 @@
 content_assist_lru_history=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><history maxLHS\="100" maxRHS\="10"><lhs name\="dml.Record"><rhs name\="dml.Record"/></lhs><lhs name\="java.lang.Enum"><rhs name\="constants.DataSourceTypeEnum"/><rhs name\="constants.RecordStatusEnum"/></lhs><lhs name\="constants.RecordStatusEnum"><rhs name\="constants.RecordStatusEnum"/></lhs><lhs name\="constants.DataSourceTypeEnum"><rhs name\="constants.DataSourceTypeEnum"/></lhs><lhs name\="java.lang.CharSequence"><rhs name\="java.lang.String"/></lhs><lhs name\="java.util.Collection"><rhs name\="java.util.ArrayList"/></lhs><lhs name\="java.lang.Iterable"><rhs name\="java.util.ArrayList"/></lhs><lhs name\="java.util.List"><rhs name\="java.util.ArrayList"/></lhs><lhs name\="dml.TableColumn"><rhs name\="dml.TableColumn"/></lhs><lhs name\="dml.Metadata"><rhs name\="dml.Metadata"/></lhs><lhs name\="h2.DataBlock"><rhs name\="h2.DataBlock"/></lhs><lhs name\="h2.QueryDataSource"><rhs name\="h2.QueryDataSource"/></lhs></history>
-content_assist_number_of_computers=14
+content_assist_number_of_computers=23
 content_assist_proposals_background=255,255,255
 content_assist_proposals_foreground=0,0,0
 eclipse.preferences.version=1

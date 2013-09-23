@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map>
+<<<<<<< HEAD:.metadata/.plugins/org.eclipse.pde.core/1379270524700.workspace/.pluginInfo
+	<bundle bundleID="607" localization="OSGI-INF/l10n/bundle" name="Base" project="cz.robotron.base">
+		<library name="ojdbc6.jar"/>
+		<library name="guava-15.0.jar"/>
+	</bundle>
+	<bundle bundleID="608" localization="OSGI-INF/l10n/bundle" name="H2" project="h3"/>
+=======
+	<bundle bundleID="617" localization="OSGI-INF/l10n/bundle" name="Base" project="cz.robotron.base">
+		<library name="ojdbc6.jar"/>
+		<library name="guava-15.0.jar"/>
+	</bundle>
+	<bundle bundleID="618" localization="OSGI-INF/l10n/bundle" name="H2" project="h3"/>
+>>>>>>> 0ab06df07e95b4baae791a5080c5b629a1f34eed:.metadata/.plugins/org.eclipse.pde.core/1380491780382.workspace/.pluginInfo
+</map>
