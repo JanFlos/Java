@@ -1,5 +1,3 @@
-/base
-/constants
-/dml
-/h2
 /tests
+/h2
+/dml

@@ -2,8 +2,7 @@ package tests;
 
 import h2.DataBlock;
 import h2.QueryDataSource;
-import java.sql.Connection;
-import java.sql.DriverManager;
+import h2.DataBlockColumn;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
@@ -12,32 +11,16 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
 import dml.CommandBuilder;
-import dml.Metadata;
-import dml.TableColumn;
+import dml.MetadataProvider;
 
-public class Tests {
+public class DataBlockTests {
 
     private static ApplicationContext _appContext;
 
-
     @BeforeClass
     public static void setUp() throws ClassNotFoundException, SQLException {
-        if (_appContext == null) {
-            _appContext = new ApplicationContext();
-
-            Class.forName("oracle.jdbc.OracleDriver");
-
-            /* 
-            System.setProperty("oracle.net.tns_admin", "c:\\Oracle\\Dev10g\\NETWORK\\ADMIN");
-            _connection = DriverManager.getConnection("jdbc:oracle:thin:@ece", "ec_calc", "calc");
-            */
-            Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@//vm/ecr4pres", "ec_calc", "calc");
-
-            _appContext.setConnection(connection);
-            _appContext.setEventBus(new EventBus());
-        }
+        _appContext = TestUtils.getAppContext();
     }
 
     @AfterClass
@@ -50,7 +33,7 @@ public class Tests {
     public void BuilderTest() {
 
         // Insert without returning
-        Metadata metadata = getDMLMetadata(false);
+        MetadataProvider metadata = getDMLMetadata(false);
         out(CommandBuilder.insertCommand(metadata));
 
         // Insert with returning
@@ -70,8 +53,8 @@ public class Tests {
     @Test
     public void test() throws SQLException {
         QueryDataSource queryDataSource = new QueryDataSource("TTEST");
-        Metadata metadata = new Metadata(_appContext.getConnection(), queryDataSource);
-        List<String> pkCols = metadata.getPrimaryKeyColumns();
+        MetadataProvider metadata = new MetadataProvider(_appContext.getConnection(), queryDataSource);
+        List<String> pkCols = metadata.getPrimaryKeyColumnNames();
 
     }
 
@@ -107,14 +90,14 @@ public class Tests {
         master.firstRecord(); // jump on first selected record causes detail datablock to refresh
     }
 
-    private Metadata getDMLMetadata(boolean returningCols) {
+    private MetadataProvider getDMLMetadata(boolean returningCols) {
         if (returningCols)
-            return new Metadata("ttest",
+            return new MetadataProvider("ttest",
                                 ImmutableList.of("id", "name", "tag"),
-                                ImmutableList.of(new TableColumn("id",
+                                ImmutableList.of(new DataBlockColumn("id",
                                                                  Types.NUMERIC)),
                                 ImmutableList.of("tag"));
-        return new Metadata("ttest", ImmutableList.of("id", "name", "tag"));
+        return new MetadataProvider("ttest", ImmutableList.of("id", "name", "tag"));
     }
 
 

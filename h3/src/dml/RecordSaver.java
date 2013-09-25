@@ -16,11 +16,11 @@ public class RecordSaver {
 
 	private RecordDeleter	_deleter;
 	private RecordInserter	_inserter;
-	private final Metadata			_metadata;
+	private final MetadataProvider			_metadata;
 	private RecordUpdater	_updater;
     private final Connection _connection;
 
-    public RecordSaver(Connection connection, Metadata metadata) {
+    public RecordSaver(Connection connection, MetadataProvider metadata) {
 		_metadata = metadata;
         _connection = connection;
 	}

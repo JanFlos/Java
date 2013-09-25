@@ -24,7 +24,7 @@ public class RecordSelector {
      * @param metadata
      * @throws SQLException
      */
-    public RecordSelector(Connection connection, Metadata metadata) throws SQLException {
+    public RecordSelector(Connection connection, MetadataProvider metadata) throws SQLException {
         _command = connection.prepareStatement(metadata.getDataSource(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         _columnCount = metadata.getColumnCount();
 

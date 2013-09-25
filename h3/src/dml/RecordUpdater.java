@@ -13,9 +13,9 @@ import java.sql.SQLException;
 public class RecordUpdater {
 
 	private CallableStatement	_command;
-	private Metadata			_metadata;
+	private MetadataProvider			_metadata;
 
-	public RecordUpdater(Connection connection, Metadata metadata) throws SQLException {
+	public RecordUpdater(Connection connection, MetadataProvider metadata) throws SQLException {
 
 		_metadata = metadata;
 
@@ -32,12 +32,12 @@ public class RecordUpdater {
 
 		int parameterIndex = 0;
 
-		for (String updatedColumn : _metadata.getUpdateableColumns()) {
+		for (String updatedColumn : _metadata.getUpdateableColumnNames()) {
 			int columnIndex = _metadata.getColumnIndex(updatedColumn);
 			_command.setObject(++parameterIndex, record[columnIndex]);
 		}
 
-		for (String primaryKeyColumn : _metadata.getReturningColumns()) {
+		for (String primaryKeyColumn : _metadata.getReturningColumnNames()) {
 			int columnIndex = _metadata.getColumnIndex(primaryKeyColumn);
 			_command.setObject(++parameterIndex, record[columnIndex]);
 

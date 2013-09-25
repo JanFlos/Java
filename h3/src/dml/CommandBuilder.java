@@ -5,10 +5,10 @@ import base.ListUtils;
 
 public class CommandBuilder {
 
-	public static String insertCommand(Metadata metadata) {
+	public static String insertCommand(MetadataProvider metadata) {
 
 		String returningClause = "";
-		List<String> returningColumns = metadata.getReturningColumns();
+		List<String> returningColumns = metadata.getReturningColumnNames();
 		if (returningColumns != null) {
 
             String lCols = ListUtils.join(returningColumns, ", ");
@@ -17,7 +17,7 @@ public class CommandBuilder {
 			returningClause = String.format(" returning %s into %s", lCols, lDummy);
 		}
 
-		List<String> readWriteColumns = metadata.getInsertableColumns();
+        List<String> readWriteColumns = metadata.getInsertableColumnNames();
         String readWriteColumnList = ListUtils.join(readWriteColumns, ", ");
         String parameterList = ListUtils.join("?", ", ", readWriteColumns.size());
 		String tableName = metadata.getTableName();
@@ -26,10 +26,10 @@ public class CommandBuilder {
 
 	}
 
-	public static String deleteCommand(Metadata metadata) {
+	public static String deleteCommand(MetadataProvider metadata) {
 
 		String tableName = metadata.getTableName();
-        String primaryKeyList = ListUtils.join(metadata.getPrimaryKeyColumns(), " and ", " = ?");
+        String primaryKeyList = ListUtils.join(metadata.getPrimaryKeyColumnNames(), " and ", " = ?");
 
 		return String.format("{call delete from %s where %s}", tableName, primaryKeyList);
 
@@ -41,11 +41,11 @@ public class CommandBuilder {
 
 	}
 
-	public static String updateCommand(Metadata metadata) {
+	public static String updateCommand(MetadataProvider metadata) {
 
 		String tableName = metadata.getTableName();
-        String updatedColumns = ListUtils.join(metadata.getUpdateableColumns(), ", ", " = ?");
-        String primaryKeyList = ListUtils.join(metadata.getPrimaryKeyColumns(), " and ", " = ?");
+        String updatedColumns = ListUtils.join(metadata.getUpdateableColumnNames(), ", ", " = ?");
+        String primaryKeyList = ListUtils.join(metadata.getPrimaryKeyColumnNames(), " and ", " = ?");
 
 		return String.format("{call update %s set %s where %s}", tableName, updatedColumns, primaryKeyList);
 	}

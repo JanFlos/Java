@@ -1,12 +1,12 @@
-package dml;
+package h2;
 
-public class TableColumn {
+public class DataBlockColumn {
 
     private final String _name;
     private final int    _type;
     private final int    _displaySize;
 	
-    public TableColumn(String name, int type, int displaySize) {
+    public DataBlockColumn(String name, int type, int displaySize) {
         _name = name.toLowerCase();
         _type = type;
         _displaySize = displaySize;
@@ -16,7 +16,7 @@ public class TableColumn {
      * @param string
      * @param numeric
      */
-    public TableColumn(String name, int type) {
+    public DataBlockColumn(String name, int type) {
         this(name, type, 100);
     }
 

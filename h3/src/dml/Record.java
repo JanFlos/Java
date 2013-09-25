@@ -30,8 +30,14 @@ public class Record {
 	}
 
 
-    public Object[] getData() {
-		return _data;
+    public String[] getData() {
+        int count = _data.length;
+        String[] result = new String[count];
+        for (int i = 0; i < count; i++) {
+            result[i] = _data[i] != null ? _data[i].toString() : "";
+
+        }
+        return result;
 	}
 
 	public void setData(Object[] data) {

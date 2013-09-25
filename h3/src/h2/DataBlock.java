@@ -9,7 +9,7 @@ import java.util.List;
 import tests.ApplicationContext;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.Subscribe;
-import dml.Metadata;
+import dml.MetadataProvider;
 import dml.Record;
 import dml.RecordSaver;
 import dml.RecordSelector;
@@ -26,13 +26,13 @@ public class DataBlock {
 
     private QueryDataSource     _queryDataSource;
     private final ChangeTracker _changeTracker;
-    private Metadata            _metadata;
+    private MetadataProvider    _metadataProvider;
     private List<Record>        _records;
     private Record              _currentRecord;
     private RecordSaver         _recordSaver;
     private RecordSelector      _recordSelector;
-    private List<Relation>      _detailBlocks;
-    private List<Relation>      _masterBlocks;
+    private List<Relation>      _detailRelations;
+    private Relation            _masterRelation;
 
     /**
     * 
@@ -54,9 +54,9 @@ public class DataBlock {
         String dmlTarget) throws SQLException
     {
         _queryDataSource = new QueryDataSource(dataSource, dmlTarget);
-        _metadata = new Metadata(connection, _queryDataSource);
-        _recordSaver = new RecordSaver(connection, _metadata);
-        _recordSelector = new RecordSelector(connection, _metadata);
+        _metadataProvider = new MetadataProvider(connection, _queryDataSource);
+        _recordSaver = new RecordSaver(connection, _metadataProvider);
+        _recordSelector = new RecordSelector(connection, _metadataProvider);
 
     }
 
@@ -72,9 +72,9 @@ public class DataBlock {
     public void createRecord() {
 
         assert _queryDataSource != null : "QueryDatasource must be set";
-        assert _metadata != null;
+        assert _metadataProvider != null;
 
-        Object[] data = new Object[_metadata.getColumnCount()];
+        Object[] data = new Object[_metadataProvider.getColumnCount()];
         Record record = Record.newQueriedRecord(data);
 
         _currentRecord = record;
@@ -91,9 +91,9 @@ public class DataBlock {
      * Changes the current record item value
      */
     public void setItem(String columnName, Object value) {
-        assert _metadata != null;
+        assert _metadataProvider != null;
 
-        int columnIndex = _metadata.getColumnIndex(columnName);
+        int columnIndex = _metadataProvider.getColumnIndex(columnName);
         setItem(columnIndex, value);
 
     }
@@ -183,23 +183,21 @@ public class DataBlock {
         assert detail != null;
         assert joinCondition != null;
 
-        if (_detailBlocks == null)
-            _detailBlocks = Lists.newArrayList();
+        if (_detailRelations == null)
+            _detailRelations = Lists.newArrayList();
         
 
-        _detailBlocks.add(new Relation(detail, joinCondition));
+        _detailRelations.add(new Relation(detail, joinCondition));
 
-        detail.addMasterBlock(this, joinCondition);
+        detail.setMasterRelation(this, joinCondition);
     }
 
     /**
      * @param dataBlock
      */
-    private void addMasterBlock(DataBlock dataBlock, String joinCondition) {
-        if (_masterBlocks == null)
-            _masterBlocks = Lists.newArrayList();
+    private void setMasterRelation(DataBlock dataBlock, String joinCondition) {
 
-        _masterBlocks.add(new Relation(dataBlock, joinCondition));
+        _masterRelation = new Relation(dataBlock, joinCondition);
 
     }
 
@@ -208,6 +206,15 @@ public class DataBlock {
      */
     public void firstRecord() {
         // TODO Auto-generated method stub
+
+    }
+
+    public MetadataProvider getMetadataProvider() {
+        return _metadataProvider;
+    }
+
+    public List<Record> getRecords() {
+        return _records;
 
     }
 

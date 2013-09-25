@@ -16,10 +16,10 @@ import java.util.List;
  */
 public class RecordDeleter {
 
-	private final Metadata			_metadata;
+	private final MetadataProvider			_metadata;
 	private final CallableStatement	_command;
 
-	public RecordDeleter(Connection connection, Metadata metadata) throws SQLException {
+	public RecordDeleter(Connection connection, MetadataProvider metadata) throws SQLException {
 
 		_metadata = metadata;
 
@@ -36,7 +36,7 @@ public class RecordDeleter {
 
 		// Set the parameter values
 		int parameterIndex = 0;
-		List<String> primaryKeyColumns = _metadata.getPrimaryKeyColumns();
+		List<String> primaryKeyColumns = _metadata.getPrimaryKeyColumnNames();
 		int columnIndex = 0;
 		for (String primaryKeyColumn : primaryKeyColumns) {
 			columnIndex = _metadata.getColumnIndex(primaryKeyColumn);
