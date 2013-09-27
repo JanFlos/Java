@@ -11,14 +11,18 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import dml.MetadataProvider;
 import dml.Record;
+import events.SelectionChanged;
 
 public class TableViewer {
 
     Table                    _table;
     DataBlock                _dataBlock;
     private MetadataProvider _metadataProvider;
+    private EventBus         _eventBus;
 
     public void setDataBlock(DataBlock dataBlock) {
 
@@ -28,11 +32,31 @@ public class TableViewer {
 
         _dataBlock = dataBlock;
         _metadataProvider = dataBlock.getMetadataProvider();
+        _eventBus = new EventBus();
+
+        // establish communication line with underlying datablock 
+        observeOn(_dataBlock);
+        _dataBlock.observeOn(this);
 
         createTableColumns();
         refreshContent();
         registerSelectionListener();
 
+    }
+
+    private void observeOn(Object object) {
+        getEventBus().register(object);
+    }
+
+    private EventBus getEventBus() {
+        if (_eventBus == null)
+            _eventBus = new EventBus();
+        return _eventBus;
+    }
+
+    @Subscribe
+    void handleSelectionChangedEvent(SelectionChanged event) {
+        _table.setSelection(event.getSelectionIndex());
     }
 
     private void registerSelectionListener() {

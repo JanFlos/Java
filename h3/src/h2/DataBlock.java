@@ -8,11 +8,13 @@ import java.sql.SQLException;
 import java.util.List;
 import tests.ApplicationContext;
 import com.google.common.collect.Lists;
+import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import dml.MetadataProvider;
 import dml.Record;
 import dml.RecordSaver;
 import dml.RecordSelector;
+import events.SelectionChanged;
 
 /**
  * @author Jan Flos
@@ -33,6 +35,7 @@ public class DataBlock {
     private RecordSelector      _recordSelector;
     private List<Relation>      _detailRelations;
     private Relation            _masterRelation;
+    private EventBus            _eventBus;
 
     /**
     * 
@@ -205,7 +208,16 @@ public class DataBlock {
      * Jump to first selected record 
      */
     public void firstRecord() {
-        // TODO Auto-generated method stub
+        setRecord(0);
+
+    }
+
+    private void setRecord(int i) {
+
+        _currentRecord = _records.get(i);
+
+        if (_eventBus != null)
+            _eventBus.post(new SelectionChanged(i));
 
     }
 
@@ -216,6 +228,17 @@ public class DataBlock {
     public List<Record> getRecords() {
         return _records;
 
+    }
+
+    public void observeOn(Object object) {
+        getEventBus().register(object);
+    }
+
+    private EventBus getEventBus() {
+        if (_eventBus == null) 
+            _eventBus = new EventBus();
+
+        return _eventBus;
     }
 
 }
