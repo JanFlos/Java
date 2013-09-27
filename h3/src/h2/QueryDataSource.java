@@ -20,6 +20,7 @@ public class QueryDataSource {
 
         _datasourceType = DataSourceTypeEnum.FROM_QUERY_CLAUSE;
         _queryDataSource = dataSource;
+        _dmlTarget = dmlTarget;
         if (dataSource.matches("^[a-zA-Z]\\S*$")) {
             _datasourceType = DataSourceTypeEnum.TABLE;
             _dmlTarget = _queryDataSource;

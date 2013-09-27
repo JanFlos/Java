@@ -3,8 +3,8 @@
  */
 package dml;
 
-import h2.QueryDataSource;
 import h2.DataBlockColumn;
+import h2.QueryDataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,16 +23,16 @@ import com.google.common.collect.Maps;
  */
 public class MetadataProvider {
 
-    private final String               _tableName;
+    private final String               _dmlTargetTableName;
     private final List<String>         _allColumnNames;
-    private List<String>               _returningColumnNames;
-    private final List<String>         _readOnlyColumnNames;
-    private final List<String>         _insertableColumnNames;
+    private List<String>               _returningColumnNames  = null;
+    private List<String>               _readOnlyColumnNames;
+    private List<String>               _insertableColumnNames = null;
     private final Map<String, Integer> _columnTypes;
     private List<String>               _primaryKeyColumnsNames;
-    private final List<String>         _updateableColumnsNames;
+    private List<String>               _updateableColumnsNames = null;
     private String                     _queryDataSource;
-    private List<DataBlockColumn>          _allColumns;
+    private List<DataBlockColumn>      _allColumns;
 
     /**
      * Constructor method
@@ -45,7 +45,7 @@ public class MetadataProvider {
                             List<String> primaryKeyColumns)
     {
 
-        _tableName = tableName;
+        _dmlTargetTableName = tableName;
         _allColumnNames = tableColumns;
         _readOnlyColumnNames = readOnlyColumns;
 
@@ -116,18 +116,23 @@ public class MetadataProvider {
         _queryDataSource = queryDataSource.getQueryDataSource();
         _allColumns = findTableColumns(connection, _queryDataSource);
 
-        _tableName = queryDataSource.getDMLTarget();
         _allColumnNames = getColumnNames(_allColumns);
         _columnTypes = getColumnTypes(_allColumns);
 
-        List<DataBlockColumn> targetTableColumns = findTableColumns(connection, _tableName);        // Find all columns for data source query
+        _dmlTargetTableName = queryDataSource.getDMLTarget();
 
-        _insertableColumnNames = getColumnNames(targetTableColumns);
-        _readOnlyColumnNames = ListUtils.difference(_allColumnNames, _insertableColumnNames);
-        _primaryKeyColumnsNames = findPrimaryKeyColumnNames(connection, _tableName);                         // Find primary key columns in data dictionary
-        _returningColumnNames = findReturningColumnNames(_primaryKeyColumnsNames);
+        if (_dmlTargetTableName != null) {
 
-        _updateableColumnsNames = ListUtils.difference(_insertableColumnNames, _primaryKeyColumnsNames);
+            List<DataBlockColumn> targetTableColumns = findTableColumns(connection, _dmlTargetTableName);        // Find all columns for data source query
+            _insertableColumnNames = getColumnNames(targetTableColumns);
+            _readOnlyColumnNames = ListUtils.difference(_allColumnNames, _insertableColumnNames);
+            _primaryKeyColumnsNames = findPrimaryKeyColumnNames(connection, _dmlTargetTableName);                         // Find primary key columns in data dictionary
+            _returningColumnNames = findReturningColumnNames(_primaryKeyColumnsNames);
+            _updateableColumnsNames = ListUtils.difference(_insertableColumnNames, _primaryKeyColumnsNames);
+
+        } else {
+            _readOnlyColumnNames = Lists.newArrayList(_allColumnNames);
+        }
 
     }
 
@@ -228,8 +233,8 @@ public class MetadataProvider {
     /**
      * Getters/Setters
      */
-    public String getTableName() {
-        return _tableName;
+    public String getDmlTargetTableName() {
+        return _dmlTargetTableName;
     }
 
     public List<String> getTableColumnNames() {

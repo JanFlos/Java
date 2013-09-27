@@ -47,7 +47,7 @@ public class TestUtils {
 
     public static void startUI() {
 
-        _shell.pack();
+        //_shell.pack();
         _shell.open();
 
         while (!_shell.isDisposed()) {

@@ -20,7 +20,7 @@ public class CommandBuilder {
         List<String> readWriteColumns = metadata.getInsertableColumnNames();
         String readWriteColumnList = ListUtils.join(readWriteColumns, ", ");
         String parameterList = ListUtils.join("?", ", ", readWriteColumns.size());
-		String tableName = metadata.getTableName();
+		String tableName = metadata.getDmlTargetTableName();
 
 		return String.format("{call insert into %s (%s) values (%s)%s}", tableName, readWriteColumnList, parameterList, returningClause);
 
@@ -28,7 +28,7 @@ public class CommandBuilder {
 
 	public static String deleteCommand(MetadataProvider metadata) {
 
-		String tableName = metadata.getTableName();
+		String tableName = metadata.getDmlTargetTableName();
         String primaryKeyList = ListUtils.join(metadata.getPrimaryKeyColumnNames(), " and ", " = ?");
 
 		return String.format("{call delete from %s where %s}", tableName, primaryKeyList);
@@ -43,7 +43,7 @@ public class CommandBuilder {
 
 	public static String updateCommand(MetadataProvider metadata) {
 
-		String tableName = metadata.getTableName();
+		String tableName = metadata.getDmlTargetTableName();
         String updatedColumns = ListUtils.join(metadata.getUpdateableColumnNames(), ", ", " = ?");
         String primaryKeyList = ListUtils.join(metadata.getPrimaryKeyColumnNames(), " and ", " = ?");
 
