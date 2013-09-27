@@ -3,7 +3,11 @@ package tests;
 
 import h2.DataBlock;
 import java.sql.SQLException;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -28,7 +32,7 @@ public class UITests {
     @Test
     public void test() throws SQLException {
 
-        DataBlock dataBlock =
+        final DataBlock dataBlock =
             DataBlock.createDataBlock(_appContext, "select ber_id, werte_von, name from berechnungen where rownum <= 100");
         dataBlock.executeQuery();
 
@@ -40,6 +44,15 @@ public class UITests {
         shell.setLayout(layout);
 
         TableViewer tableViewer = new TableViewer(shell, dataBlock);
+
+        Button button = new Button(shell, SWT.NONE);
+        button.setText("pressme");
+        button.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                dataBlock.nextRecord();
+            }
+        });
 
         shell.pack();
         shell.setSize(shell.getBounds().width, 480);

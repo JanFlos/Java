@@ -2,6 +2,7 @@ package ui;
 
 import h2.DataBlock;
 import h2.DataBlockColumn;
+import java.sql.SQLException;
 import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -11,6 +12,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import dml.MetadataProvider;
@@ -24,7 +26,7 @@ public class TableViewer {
     private MetadataProvider _metadataProvider;
     private EventBus         _eventBus;
 
-    public void setDataBlock(DataBlock dataBlock) {
+    public void setDataBlock(DataBlock dataBlock) throws SQLException {
 
         assert _dataBlock != null;
         assert dataBlock.getMetadataProvider() != null;
@@ -55,7 +57,7 @@ public class TableViewer {
     }
 
     @Subscribe
-    void handleSelectionChangedEvent(SelectionChanged event) {
+    public void synchronizeSelection(SelectionChanged event) {
         _table.setSelection(event.getSelectionIndex());
     }
 
@@ -76,18 +78,27 @@ public class TableViewer {
             public void handleEvent(Event e) {
                 String string = "";
                 TableItem[] selection = _table.getSelection();
-                for (int i = 0; i < selection.length; i++)
-                    string += selection[i] + " ";
-                System.out.println("DefaultSelection={" + string + "}");
+                
+                if (selection != null) {
+                    List<Integer> list = Lists.newArrayList();
+                  for (int i = 0; i < selection.length; i++)
+                        list.add(_table.indexOf(selection[i]));
+                    getEventBus().post(new SelectionChanged(list));
+
+                }
+                    
+
+                
+                
             }
         });
     }
 
-    public TableViewer(Composite parent) {
+    public TableViewer(Composite parent) throws SQLException {
         this(parent, null);
     }
 
-    public TableViewer(Composite parent, DataBlock dataBlock) {
+    public TableViewer(Composite parent, DataBlock dataBlock) throws SQLException {
         _table = new Table(parent, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
         _table.setHeaderVisible(true);
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);

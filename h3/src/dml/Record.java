@@ -56,7 +56,7 @@ public class Record {
      * @param columnIndex
      * @param value
      */
-    public void setColumn(int columnIndex, Object value) {
+    public void setValue(int columnIndex, Object value) {
         _data[columnIndex] = value;
 
     }
@@ -69,6 +69,14 @@ public class Record {
         Record record = new Record(data);
         record.setStatus(RecordStatusEnum.NEW);
         return record;
+    }
+
+    public Object getValue(int columnIndex) {
+        
+        assert _data != null && _data.length - 1 >= columnIndex;
+        
+        return _data[columnIndex];
+
     }
 
     /**

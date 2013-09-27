@@ -1,8 +1,8 @@
 package tests;
 
 import h2.DataBlock;
-import h2.QueryDataSource;
 import h2.DataBlockColumn;
+import h2.QueryDataSource;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
@@ -83,10 +83,10 @@ public class DataBlockTests {
 
     @Test
     public void queryMasterDetailTest() throws SQLException {
-        DataBlock master = DataBlock.createDataBlock(_appContext, "DB1", "TTEST");
-        DataBlock detail = DataBlock.createDataBlock(_appContext, "DB2", "TTS_DETAIL");
+        DataBlock master = DataBlock.createDataBlock(_appContext, "TTEST");
+        DataBlock detail = DataBlock.createDataBlock(_appContext, "TTS_DETAIL");
 
-        master.addDetailBlock(detail, "TTS_ID = @ID");
+        master.addDetailBlock(detail, "tts_id = :id");
         master.firstRecord(); // jump on first selected record causes detail datablock to refresh
     }
 

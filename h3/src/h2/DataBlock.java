@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import dml.MetadataProvider;
+import dml.QueriedColumn;
 import dml.Record;
 import dml.RecordSaver;
 import dml.RecordSelector;
@@ -26,40 +27,40 @@ public class DataBlock {
         return new DataBlock();
     }
 
-    private QueryDataSource     _queryDataSource;
-    private final ChangeTracker _changeTracker;
-    private MetadataProvider    _metadataProvider;
-    private List<Record>        _records;
-    private Record              _currentRecord;
-    private RecordSaver         _recordSaver;
-    private RecordSelector      _recordSelector;
-    private List<Relation>      _detailRelations;
-    private Relation            _masterRelation;
-    private EventBus            _eventBus;
+    private QueryDataSource  _queryDataSource;
+    private ChangeTracker    _changeTracker;
+    private MetadataProvider _metadataProvider;
+    private List<Record>     _records;
+    private Record           _currentRecord;
+    private RecordSaver      _recordSaver;
+    private RecordSelector   _recordSelector;
+    private List<Relation>   _detailRelations;
+    private Relation         _masterRelation;
+    private EventBus         _eventBus;
+    private Connection       _connection;
 
     /**
     * 
     */
-    private DataBlock() {
-        _changeTracker = new ChangeTracker();
-    }
+    private DataBlock() {}
 
     /**
      * Sets the Table name or the query used to load data
-     * 
-     * @param string
-     * @param dataSourceType
-     * @throws SQLException 
      */
-    public void setDataSource(
+    private void setDataSource(
         Connection connection,
         String dataSource,
         String dmlTarget) throws SQLException
     {
         _queryDataSource = new QueryDataSource(dataSource, dmlTarget);
-        _metadataProvider = new MetadataProvider(connection, _queryDataSource);
-        _recordSaver = new RecordSaver(connection, _metadataProvider);
-        _recordSelector = new RecordSelector(connection, _metadataProvider);
+
+        //        _changeTracker;
+
+        _metadataProvider = null;
+        _records = null;
+        _currentRecord = null;
+        _recordSaver = null;
+        _recordSelector = null;
 
     }
 
@@ -71,13 +72,11 @@ public class DataBlock {
 
     /**
      * Creates a new record in the block
+     * @throws SQLException 
      */
-    public void createRecord() {
+    public void createRecord() throws SQLException {
 
-        assert _queryDataSource != null : "QueryDatasource must be set";
-        assert _metadataProvider != null;
-
-        Object[] data = new Object[_metadataProvider.getColumnCount()];
+        Object[] data = new Object[getMetadataProvider().getColumnCount()];
         Record record = Record.newQueriedRecord(data);
 
         _currentRecord = record;
@@ -86,7 +85,7 @@ public class DataBlock {
             _records = Lists.newArrayList();
 
         _records.add(record);
-        _changeTracker.recordAdded(record);
+        getChangeTracker().recordAdded(record);
 
     }
 
@@ -106,10 +105,16 @@ public class DataBlock {
      */
     public void setItem(int columnIndex, Object value) {
         assert _currentRecord != null;
-        assert _changeTracker != null;
 
-        _currentRecord.setColumn(columnIndex, value);
-        _changeTracker.recordUpdated(_currentRecord);
+        _currentRecord.setValue(columnIndex, value);
+        getChangeTracker().recordUpdated(_currentRecord);
+    }
+
+    public Object getItem(int columnIndex) {
+        assert _currentRecord != null;
+
+        return _currentRecord.getValue(columnIndex);
+
     }
 
     /**
@@ -118,10 +123,7 @@ public class DataBlock {
      */
     public void post() throws SQLException {
 
-        assert _recordSaver != null;
-        assert _changeTracker != null;
-
-        _recordSaver.post(_changeTracker.getChangedRecords());
+        getRecordSaver().post(getChangeTracker().getChangedRecords());
 
     }
 
@@ -159,20 +161,14 @@ public class DataBlock {
 
     }
 
-    @Subscribe
-    public void masterChanged() {
-
-    }
-
     /**
      * @return 
      * @throws SQLException 
      * 
      */
     public int executeQuery() throws SQLException {
-        assert _recordSelector != null;
-
-        _records = _recordSelector.executeQuery();
+        RecordSelector recordSelector = getRecordSelector();
+        _records = recordSelector.executeQuery();
         return _records.size();
 
     }
@@ -188,11 +184,12 @@ public class DataBlock {
 
         if (_detailRelations == null)
             _detailRelations = Lists.newArrayList();
-        
 
-        _detailRelations.add(new Relation(detail, joinCondition));
-
+        Relation relation = new Relation(detail, joinCondition);
+        _detailRelations.add(relation);
         detail.setMasterRelation(this, joinCondition);
+
+        getQueryDataSource().setWhereCondition(relation.getCondition()); // Where condition must be set on datasource query
     }
 
     /**
@@ -200,8 +197,49 @@ public class DataBlock {
      */
     private void setMasterRelation(DataBlock dataBlock, String joinCondition) {
 
+        observeOn(dataBlock); // Observe changes von data block
         _masterRelation = new Relation(dataBlock, joinCondition);
 
+    }
+
+    public List<QueriedColumn> getQueriedColumns(List<String> _queriedColumnNames) throws SQLException {
+
+        List<QueriedColumn> result = Lists.newArrayList();
+
+        int index;
+        Object value = null;
+
+        for (String queriedColumn : _queriedColumnNames) {
+            index = _metadataProvider.getColumnIndex(queriedColumn);
+            value = getItem(index);
+            result.add(new QueriedColumn(index, value));
+        }
+
+        return result;
+    }
+
+    @Subscribe
+    public void handleMasterSelectionChanged(List<QueriedColumn> queriedColumns) throws SQLException {
+
+        assert _masterRelation != null : "Master relation not defined";
+
+        RecordSelector recordSelector = getRecordSelector();
+
+        //List<QueriedColumn> queriedColumns = _masterRelation.getQueriedColumns();
+
+        // set the parameter values
+        for (QueriedColumn parameter : queriedColumns) {
+            recordSelector.setParameterValue(parameter.getColumnIndex(), parameter.getValue());
+        }
+
+        // Set the query parameters according to master
+        executeQuery(); // Requery the detailblock 
+    }
+
+    @Subscribe
+    public void synchronizeSelection(SelectionChanged event) {
+        _currentRecord = _records.get(event.getSelectionIndex());
+        System.out.println("Record Synchronized" + event.getSelectionIndex());
     }
 
     /**
@@ -212,17 +250,42 @@ public class DataBlock {
 
     }
 
+    public void lastRecord() {
+        if (_records != null && _records.size() > 0) {
+            setRecord(_records.size() - 1);
+        }
+    }
+
+    public void nextRecord() {
+        if (_records != null && _currentRecord != null) {
+            int recordCount = _records.size();
+            int currentIndex = _records.indexOf(_currentRecord);
+            currentIndex++;
+            if (currentIndex + 1 <= recordCount)
+                setRecord(currentIndex);
+        }
+    }
+
     private void setRecord(int i) {
 
         _currentRecord = _records.get(i);
 
-        if (_eventBus != null)
+        if (_eventBus != null) {
             _eventBus.post(new SelectionChanged(i));
+
+        }
 
     }
 
-    public MetadataProvider getMetadataProvider() {
+    public MetadataProvider getMetadataProvider() throws SQLException {
+        if (_metadataProvider == null)
+            _metadataProvider = new MetadataProvider(getConnection(), getQueryDataSource());
         return _metadataProvider;
+    }
+
+    private QueryDataSource getQueryDataSource() {
+        assert _queryDataSource != null : "Query data source must be specified";
+        return _queryDataSource;
     }
 
     public List<Record> getRecords() {
@@ -235,10 +298,37 @@ public class DataBlock {
     }
 
     private EventBus getEventBus() {
-        if (_eventBus == null) 
+        if (_eventBus == null)
             _eventBus = new EventBus();
 
         return _eventBus;
+    }
+
+    public RecordSelector getRecordSelector() throws SQLException {
+
+        if (_recordSelector == null)
+            _recordSelector = new RecordSelector(getConnection(), getMetadataProvider());
+        return _recordSelector;
+    }
+
+    public Connection getConnection() {
+        assert _connection != null;
+        return _connection;
+    }
+
+    public RecordSaver getRecordSaver() throws SQLException {
+
+        if (_recordSaver == null)
+            _recordSaver = new RecordSaver(getConnection(), getMetadataProvider());
+
+        return _recordSaver;
+    }
+
+    public ChangeTracker getChangeTracker() {
+        if (_changeTracker == null)
+            _changeTracker = new ChangeTracker();
+
+        return _changeTracker;
     }
 
 }

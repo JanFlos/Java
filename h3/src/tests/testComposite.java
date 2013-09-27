@@ -1,9 +1,12 @@
 package tests;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
@@ -43,6 +46,19 @@ public class testComposite extends Composite {
         _table_1.setLayoutData(fd_table_1);
         _table_1.setHeaderVisible(true);
         _table_1.setLinesVisible(true);
+
+        Button btnNewButton = new Button(this, SWT.NONE);
+        btnNewButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {}
+        });
+        FormData fd_btnNewButton = new FormData();
+        fd_btnNewButton.bottom = new FormAttachment(_table, 31, SWT.BOTTOM);
+        fd_btnNewButton.top = new FormAttachment(_table, 6);
+        fd_btnNewButton.right = new FormAttachment(_table, 10, SWT.RIGHT);
+        fd_btnNewButton.left = new FormAttachment(0, 10);
+        btnNewButton.setLayoutData(fd_btnNewButton);
+        btnNewButton.setText("New Button");
 
     }
 
