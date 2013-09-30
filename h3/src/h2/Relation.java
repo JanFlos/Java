@@ -14,17 +14,17 @@ import com.google.common.collect.Lists;
 public class Relation {
     DataBlock    _dataBlock;
     String       _condition;
-    List<String> _queriedColumnNames;
+    List<String> _boundColumnNames;
 
     public Relation(DataBlock dataBlock, String condition) {
         super();
         _dataBlock = dataBlock;
         _condition = condition;
-        _queriedColumnNames = Lists.newArrayList();
+        _boundColumnNames = Lists.newArrayList();
 
         for (String token : Splitter.on('=').omitEmptyStrings().trimResults().split(_condition)) {
             if (token.startsWith(":"))
-                _queriedColumnNames.add(token.substring(1).toLowerCase());
+                _boundColumnNames.add(token.substring(1).toLowerCase());
 
         }
     }
@@ -38,6 +38,10 @@ public class Relation {
 
     public String getCondition() {
         return _condition;
+    }
+
+    public List<String> getBoundColumnNames() {
+        return _boundColumnNames;
     }
 
 

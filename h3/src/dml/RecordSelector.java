@@ -29,9 +29,6 @@ public class RecordSelector {
 
     }
 
-    public void setParameterValue(int index, Object value) throws SQLException {
-        _command.setObject(index, value);
-    }
 
     /**
      * Reads the data into the cache
@@ -55,6 +52,11 @@ public class RecordSelector {
         }
 
         return result;
+    }
+
+    public void setParameter(Parameter boundColumnValue) throws SQLException {
+        _command.setObject(boundColumnValue.getIndex(), boundColumnValue.getValue());
+
     }
 
 }

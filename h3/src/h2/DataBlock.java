@@ -11,11 +11,13 @@ import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import dml.MetadataProvider;
-import dml.QueriedColumn;
+import dml.Parameter;
 import dml.Record;
 import dml.RecordSaver;
 import dml.RecordSelector;
-import events.SelectionChanged;
+import events.Event;
+import events.EventTypeEnum;
+import events.SelectionChange;
 
 /**
  * @author Jan Flos
@@ -202,44 +204,58 @@ public class DataBlock {
 
     }
 
-    public List<QueriedColumn> getQueriedColumns(List<String> _queriedColumnNames) throws SQLException {
-
-        List<QueriedColumn> result = Lists.newArrayList();
-
+    public List<Parameter> getParameterList(List<String> columnNames) throws SQLException {
+        List<Parameter> result = Lists.newArrayList();
         int index;
-        Object value = null;
 
-        for (String queriedColumn : _queriedColumnNames) {
-            index = _metadataProvider.getColumnIndex(queriedColumn);
+        Object value;
+        int i = 0;
+        for (String boundColumnName : columnNames) {
+            index = getMetadataProvider().getColumnIndex(boundColumnName);
             value = getItem(index);
-            result.add(new QueriedColumn(index, value));
+            result.add(new Parameter(boundColumnName, i++, value));
         }
-
-        return result;
+        return null;
     }
 
-    @Subscribe
-    public void handleMasterSelectionChanged(List<QueriedColumn> queriedColumns) throws SQLException {
+    public void queryMasterDetail() throws SQLException {
 
         assert _masterRelation != null : "Master relation not defined";
 
         RecordSelector recordSelector = getRecordSelector();
-
-        //List<QueriedColumn> queriedColumns = _masterRelation.getQueriedColumns();
+        List<Parameter> querParameters = getParameterList(_masterRelation.getBoundColumnNames());
 
         // set the parameter values
-        for (QueriedColumn parameter : queriedColumns) {
-            recordSelector.setParameterValue(parameter.getColumnIndex(), parameter.getValue());
+        for (Parameter boundColumnValue : querParameters) {
+            recordSelector.setParameter(boundColumnValue);
         }
 
         // Set the query parameters according to master
         executeQuery(); // Requery the detailblock 
     }
 
+    public void synchronizeSelection(SelectionChange selectionChange) {
+        _currentRecord = _records.get(selectionChange.getSelectionIndex());
+        System.out.println("Record Synchronized" + selectionChange.getSelectionIndex());
+    }
+
     @Subscribe
-    public void synchronizeSelection(SelectionChanged event) {
-        _currentRecord = _records.get(event.getSelectionIndex());
-        System.out.println("Record Synchronized" + event.getSelectionIndex());
+    public void handleEvent(Event e) throws SQLException {
+
+        EventTypeEnum eventType = e.getType();
+        if (eventType == EventTypeEnum.SELECTION_CHANGED) {
+
+            if (e.getSender() instanceof DataBlock) {
+
+                queryMasterDetail();
+
+            } else {
+
+                SelectionChange selectionChange = (SelectionChange) e.getInfo();
+                synchronizeSelection(selectionChange);
+            }
+
+        }
     }
 
     /**
@@ -271,7 +287,7 @@ public class DataBlock {
         _currentRecord = _records.get(i);
 
         if (_eventBus != null) {
-            _eventBus.post(new SelectionChanged(i));
+            _eventBus.post(new SelectionChange(i));
 
         }
 

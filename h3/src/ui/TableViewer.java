@@ -17,7 +17,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import dml.MetadataProvider;
 import dml.Record;
-import events.SelectionChanged;
+import events.SelectionChange;
 
 public class TableViewer {
 
@@ -57,7 +57,7 @@ public class TableViewer {
     }
 
     @Subscribe
-    public void synchronizeSelection(SelectionChanged event) {
+    public void synchronizeSelection(SelectionChange event) {
         _table.setSelection(event.getSelectionIndex());
     }
 
@@ -83,7 +83,7 @@ public class TableViewer {
                     List<Integer> list = Lists.newArrayList();
                   for (int i = 0; i < selection.length; i++)
                         list.add(_table.indexOf(selection[i]));
-                    getEventBus().post(new SelectionChanged(list));
+                    getEventBus().post(new SelectionChange(list));
 
                 }
                     

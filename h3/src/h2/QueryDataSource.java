@@ -73,6 +73,7 @@ public class QueryDataSource {
         return _parameterClause;
     }
 
+
     public void setWhereCondition(String condition) {
         _parameterClause = condition.replaceAll("\\:\\w[\\w\\d]+", "?");
     }
