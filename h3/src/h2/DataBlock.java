@@ -15,9 +15,8 @@ import dml.Parameter;
 import dml.Record;
 import dml.RecordSaver;
 import dml.RecordSelector;
-import events.Event;
-import events.EventTypeEnum;
-import events.SelectionChange;
+import events.QueryExecutedEvent;
+import events.SelectionChangedEvent;
 
 /**
  * @author Jan Flos
@@ -40,6 +39,7 @@ public class DataBlock {
     private Relation         _masterRelation;
     private EventBus         _eventBus;
     private Connection       _connection;
+    private boolean          _defferedCoordination;
 
     /**
     * 
@@ -55,8 +55,7 @@ public class DataBlock {
         String dmlTarget) throws SQLException
     {
         _queryDataSource = new QueryDataSource(dataSource, dmlTarget);
-
-        //        _changeTracker;
+        _connection = connection;
 
         _metadataProvider = null;
         _records = null;
@@ -171,6 +170,13 @@ public class DataBlock {
     public int executeQuery() throws SQLException {
         RecordSelector recordSelector = getRecordSelector();
         _records = recordSelector.executeQuery();
+
+        // Sending this event on Event bus to inform all Observers
+        if (_eventBus != null) {
+            _eventBus.post(new QueryExecutedEvent(this));
+
+        }
+
         return _records.size();
 
     }
@@ -191,7 +197,7 @@ public class DataBlock {
         _detailRelations.add(relation);
         detail.setMasterRelation(this, joinCondition);
 
-        getQueryDataSource().setWhereCondition(relation.getCondition()); // Where condition must be set on datasource query
+        detail.getQueryDataSource().setWhereCondition(relation.getCondition()); // Where condition must be set on datasource query
     }
 
     /**
@@ -204,7 +210,7 @@ public class DataBlock {
 
     }
 
-    public List<Parameter> getParameterList(List<String> columnNames) throws SQLException {
+    public List<Parameter> buildParameterList(List<String> columnNames) throws SQLException {
         List<Parameter> result = Lists.newArrayList();
         int index;
 
@@ -215,64 +221,68 @@ public class DataBlock {
             value = getItem(index);
             result.add(new Parameter(boundColumnName, i++, value));
         }
-        return null;
+        return result;
     }
 
-    public void queryMasterDetail() throws SQLException {
+    /**
+     * Queries all details, if not coordination deffered 
+     */
+    public void queryMasterDetail(Relation relation) throws SQLException {
 
-        assert _masterRelation != null : "Master relation not defined";
+        assert relation != null;
 
-        RecordSelector recordSelector = getRecordSelector();
-        List<Parameter> querParameters = getParameterList(_masterRelation.getBoundColumnNames());
+        List<Parameter> queryParameters = buildParameterList(relation.getBoundColumnNames());
+        DataBlock dataBlock = relation.getDataBlock();
 
         // set the parameter values
-        for (Parameter boundColumnValue : querParameters) {
-            recordSelector.setParameter(boundColumnValue);
-        }
+        if (queryParameters != null) {
 
-        // Set the query parameters according to master
-        executeQuery(); // Requery the detailblock 
-    }
-
-    public void synchronizeSelection(SelectionChange selectionChange) {
-        _currentRecord = _records.get(selectionChange.getSelectionIndex());
-        System.out.println("Record Synchronized" + selectionChange.getSelectionIndex());
-    }
-
-    @Subscribe
-    public void handleEvent(Event e) throws SQLException {
-
-        EventTypeEnum eventType = e.getType();
-        if (eventType == EventTypeEnum.SELECTION_CHANGED) {
-
-            if (e.getSender() instanceof DataBlock) {
-
-                queryMasterDetail();
-
-            } else {
-
-                SelectionChange selectionChange = (SelectionChange) e.getInfo();
-                synchronizeSelection(selectionChange);
+            for (Parameter parameter : queryParameters) {
+                dataBlock.setQueryParameter(parameter);
             }
 
+            // Set the query parameters according to master
+            if (!dataBlock.isDefferedCoordination())
+                dataBlock.executeQuery(); // Requery the detailblock
         }
     }
 
     /**
-     * Jump to first selected record 
+     * Sets the paramaeter for parametrised queries e.g. Master-Detail 
      */
-    public void firstRecord() {
+    private void setQueryParameter(Parameter parameter) throws SQLException {
+        RecordSelector recordSelector = getRecordSelector();
+        recordSelector.setParameter(parameter);
+
+    }
+
+    public void synchronizeSelection(SelectionChangedEvent selectionChange) throws SQLException {
+
+        setRecord(selectionChange.getSelectionIndex());
+
+    }
+
+    @Subscribe
+    public void handleSelectionChangedEvent(SelectionChangedEvent event) throws SQLException {
+        synchronizeSelection(event);
+    }
+
+    /**
+     * Jump to first selected record 
+     * @throws SQLException 
+     */
+    public void firstRecord() throws SQLException {
         setRecord(0);
 
     }
 
-    public void lastRecord() {
+    public void lastRecord() throws SQLException {
         if (_records != null && _records.size() > 0) {
             setRecord(_records.size() - 1);
         }
     }
 
-    public void nextRecord() {
+    public void nextRecord() throws SQLException {
         if (_records != null && _currentRecord != null) {
             int recordCount = _records.size();
             int currentIndex = _records.indexOf(_currentRecord);
@@ -282,13 +292,27 @@ public class DataBlock {
         }
     }
 
-    private void setRecord(int i) {
+    private void setRecord(int index) throws SQLException {
 
-        _currentRecord = _records.get(i);
+        assert index >= 0;
 
-        if (_eventBus != null) {
-            _eventBus.post(new SelectionChange(i));
+        Record record = _records.get(index);
 
+        assert record != null;
+
+        if (_currentRecord != record || _currentRecord == null) {
+
+            _currentRecord = record;
+
+            for (Relation relation : _detailRelations) {
+                queryMasterDetail(relation);
+            }
+
+            // Sending this event on Event bus to inform all Observers
+            if (_eventBus != null) {
+                _eventBus.post(new SelectionChangedEvent(index));
+
+            }
         }
 
     }
@@ -311,6 +335,14 @@ public class DataBlock {
 
     public void observeOn(Object object) {
         getEventBus().register(object);
+    }
+
+    public boolean isDefferedCoordination() {
+        return _defferedCoordination;
+    }
+
+    public void setDefferedCoordination(boolean defferedCoordination) {
+        _defferedCoordination = defferedCoordination;
     }
 
     private EventBus getEventBus() {

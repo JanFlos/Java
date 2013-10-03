@@ -55,7 +55,9 @@ public class RecordSelector {
     }
 
     public void setParameter(Parameter boundColumnValue) throws SQLException {
-        _command.setObject(boundColumnValue.getIndex(), boundColumnValue.getValue());
+        int index = boundColumnValue.getIndex();
+        Object value = boundColumnValue.getValue();
+        _command.setObject(index + 1, value);
 
     }
 

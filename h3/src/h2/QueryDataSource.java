@@ -3,6 +3,7 @@
  */
 package h2;
 
+import com.google.common.base.CharMatcher;
 import constants.DataSourceTypeEnum;
 
 /**
@@ -48,7 +49,7 @@ public class QueryDataSource {
         return _dmlTarget;
     }
 
-    public String getQueryDataSource() {
+    public String getDataSource() {
         assert _datasourceType != null;
 
         if (_datasourceType == DataSourceTypeEnum.FROM_QUERY_CLAUSE) {
@@ -71,6 +72,10 @@ public class QueryDataSource {
 
     private String getParameterClause() {
         return _parameterClause;
+    }
+
+    public int getParameterCount() {
+        return CharMatcher.is(':').countIn(_parameterClause);
     }
 
 

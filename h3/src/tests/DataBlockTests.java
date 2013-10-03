@@ -87,7 +87,8 @@ public class DataBlockTests {
         DataBlock detail = DataBlock.createDataBlock(_appContext, "TTS_DETAIL");
 
         master.addDetailBlock(detail, "tts_id = :id");
-        master.firstRecord(); // jump on first selected record causes detail datablock to refresh
+        
+        UiTestHelper.master(master).detail(detail).run();
     }
 
     private MetadataProvider getDMLMetadata(boolean returningCols) {

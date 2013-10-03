@@ -17,7 +17,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import dml.MetadataProvider;
 import dml.Record;
-import events.SelectionChange;
+import events.QueryExecutedEvent;
+import events.SelectionChangedEvent;
 
 public class TableViewer {
 
@@ -57,20 +58,29 @@ public class TableViewer {
     }
 
     @Subscribe
-    public void synchronizeSelection(SelectionChange event) {
-        _table.setSelection(event.getSelectionIndex());
+    public void handleQueryExecutedEvent(QueryExecutedEvent event) {
+        refreshContent();
+    }
+
+    @Subscribe
+    public void handleSelectionChangedEvent(SelectionChangedEvent event) {
+        Integer index = event.getSelectionIndex();
+
+        if (index > 0 || index != _table.getSelectionIndex()) {
+            _table.setSelection(index);
+        }
     }
 
     private void registerSelectionListener() {
 
         // Delete existing selection listeners
         Listener[] listeners = _table.getListeners(SWT.Selection);
-        if ( listeners!= null) {
+        if (listeners != null) {
             for (Listener listener : listeners) {
                 _table.removeListener(SWT.Selection, listener);
             }
         }
-            
+
         // Add selection listener    
         _table.addListener(SWT.Selection, new Listener() {
 
@@ -78,18 +88,15 @@ public class TableViewer {
             public void handleEvent(Event e) {
                 String string = "";
                 TableItem[] selection = _table.getSelection();
-                
+
                 if (selection != null) {
                     List<Integer> list = Lists.newArrayList();
-                  for (int i = 0; i < selection.length; i++)
+                    for (int i = 0; i < selection.length; i++)
                         list.add(_table.indexOf(selection[i]));
-                    getEventBus().post(new SelectionChange(list));
+                    getEventBus().post(new SelectionChangedEvent(list));
 
                 }
-                    
 
-                
-                
             }
         });
     }
@@ -133,20 +140,27 @@ public class TableViewer {
 
     private void refreshContent() {
 
-        _table.setRedraw(false);
-
         List<Record> records = _dataBlock.getRecords();
-        for (Record record : records) {
-            TableItem item = new TableItem(_table, SWT.None);
-            item.setText(record.getData());
+        if (records != null) {
 
+            _table.setRedraw(false);
+
+            // delete content
+            _table.removeAll();
+
+            // add content
+            for (Record record : records) {
+                TableItem item = new TableItem(_table, SWT.None);
+                item.setText(record.getData());
+
+            }
+
+            for (TableColumn column : _table.getColumns()) {
+                column.pack();
+            }
+
+            _table.setRedraw(true);
         }
-
-        for (TableColumn column : _table.getColumns()) {
-            column.pack();
-        }
-
-        _table.setRedraw(true);
     }
 
 }

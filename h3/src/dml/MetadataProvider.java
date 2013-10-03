@@ -110,10 +110,11 @@ public class MetadataProvider {
      */
     public MetadataProvider(Connection connection, QueryDataSource queryDataSource) throws SQLException {
 
+        assert connection != null;
         assert queryDataSource != null;
         assert queryDataSource.getDMLTarget() != null;
 
-        _queryDataSource = queryDataSource.getQueryDataSource();
+        _queryDataSource = queryDataSource.getDataSource();
         _allColumns = findTableColumns(connection, _queryDataSource);
 
         _allColumnNames = getColumnNames(_allColumns);
@@ -200,15 +201,20 @@ public class MetadataProvider {
     }
 
     /**
-     * @param queryDataSource
+     * @param queryDataSource.
      * @return
      * @throws SQLException 
      */
     private List<DataBlockColumn> findTableColumns(Connection connection, String queryDataSource) throws SQLException {
 
+        assert connection != null;
+        assert queryDataSource != null;
+
         List<DataBlockColumn> result = Lists.newArrayList();
 
-        String sqlText = String.format("select * from (%s) where rownum = 0", queryDataSource);
+        String sqlText = queryDataSource.replaceAll("\\?", "null");
+        sqlText = String.format("select * from (%s) where rownum = 0", sqlText);
+        
         PreparedStatement command = connection.prepareStatement(sqlText);
 
         ResultSet resultSet = command.executeQuery();

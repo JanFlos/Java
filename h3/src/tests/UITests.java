@@ -50,7 +50,12 @@ public class UITests {
         button.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                dataBlock.nextRecord();
+                try {
+                    dataBlock.nextRecord();
+                } catch (SQLException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
             }
         });
 

@@ -4,7 +4,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 
-public class SelectionChange {
+public class SelectionChangedEvent {
     List<Integer> _selection;
 
     public Integer getSelectionIndex() {
@@ -14,12 +14,12 @@ public class SelectionChange {
         return null;
     }
 
-    public SelectionChange(List<Integer> list) {
+    public SelectionChangedEvent(List<Integer> list) {
         super();
         _selection = list;
     }
 
-    public SelectionChange(int i) {
+    public SelectionChangedEvent(int i) {
         super();
         _selection = Lists.newArrayList();
         _selection.add(i);
