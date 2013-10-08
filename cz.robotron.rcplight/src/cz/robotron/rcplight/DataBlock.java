@@ -410,9 +410,11 @@ public class DataBlock {
         return result;
     }
 
-    public String getDMLTarget() {
-        _queryDataSource.getDMLTarget();
-        return null;
+    public String getName() {
+        String result = _queryDataSource.getDMLTarget();
+        if (result == null)
+            result = _queryDataSource.getDataSource();
+        return result;
     }
 
 }

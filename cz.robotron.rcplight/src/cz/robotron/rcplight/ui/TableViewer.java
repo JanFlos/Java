@@ -7,6 +7,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -120,7 +121,8 @@ public class TableViewer extends Composite {
 
     public TableViewer(Composite parent, DataBlock dataBlock) throws SQLException {
         super(parent, SWT.NONE);
-        this.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true, 1, 1));
+        setLayout(new GridLayout(1, false));
+        this.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
         _table = new Table(this, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
         _table.setHeaderVisible(true);

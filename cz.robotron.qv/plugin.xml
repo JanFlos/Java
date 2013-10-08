@@ -13,7 +13,7 @@
          </property>
          <property
                name="applicationCSS"
-               value="platform:/plugin/cz.robotron.expo/css/default.css">
+               value="platform:/plugin/cz.robotron.qv/css/default.css">
          </property>
          <property
                name="lifeCycleURI"

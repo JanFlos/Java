@@ -43,7 +43,7 @@ public class RecordSelector {
         String dataSource = _metadata.getDataSource();
 
         if (_command != null) {
-            if (dataSource != _dataSource) {
+            if (!dataSource.equals(_dataSource)) {
                 _command.close();
                 _command = null;
             }
@@ -87,6 +87,8 @@ public class RecordSelector {
     }
 
     public void setParameter(Parameter boundColumnValue) throws SQLException {
+        
+        prepareCommand();
         int index = boundColumnValue.getIndex();
         Object value = boundColumnValue.getValue();
         _command.setObject(index + 1, value);

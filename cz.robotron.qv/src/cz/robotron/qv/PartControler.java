@@ -23,26 +23,23 @@ public class PartControler {
 
     private TableViewer _tableViewer;
 
-    @Inject
 	public PartControler() {
 		//TODO Your code here
 	}
 	
 	@PostConstruct
-    public void postConstruct(Composite parent) throws SQLException {
-
-        assert _dataBlock != null;
+    public void postConstruct(Composite parent, @Optional DataBlock dataBlock) throws SQLException {
+        //assert _dataBlock != null;
 
         parent.setLayout(new GridLayout(1, false));
 
         _tableViewer = new TableViewer(parent);
+        GridLayout gridLayout = (GridLayout) _tableViewer.getLayout();
+        gridLayout.verticalSpacing = 0;
+        gridLayout.marginWidth = 0;
+        gridLayout.marginHeight = 0;
+        gridLayout.horizontalSpacing = 0;
         _tableViewer.setDataBlock(_dataBlock);
-        /*
-        _table = new Table(parent, SWT.BORDER | SWT.FULL_SELECTION);
-        _table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        _table.setHeaderVisible(true);
-        _table.setLinesVisible(true);
-        */
 		//TODO Your code here
 	}
 	
@@ -57,12 +54,14 @@ public class PartControler {
 	
 	@Focus
 	public void onFocus() {
+	    /*
         assert _tableViewer != null;
         _tableViewer.setFocus();
+        */
 	}
 
     public static String getPluginId() {
-        return "bundleclass://cz.robotron.qv/" + PartControler.class.toString();
+        return "bundleclass://cz.robotron.qv/cz.robotron.qv.PartControler";
 
     }
 	
