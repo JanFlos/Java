@@ -4,7 +4,8 @@ Bundle-Name: Base
 Bundle-SymbolicName: cz.robotron.base
 Bundle-Version: 1.0.0
 Bundle-ClassPath: ojdbc6.jar,
- guava-15.0.jar
+ guava-15.0.jar,
+ json-simple-1.1.1.jar
 Export-Package: com.google.common.annotations,
  com.google.common.base,
  com.google.common.base.internal,
@@ -21,6 +22,12 @@ Export-Package: com.google.common.annotations,
  com.google.common.reflect,
  com.google.common.util.concurrent,
  com.google.common.xml,
+ com.google.gson,
+ com.google.gson.annotations,
+ com.google.gson.internal,
+ com.google.gson.internal.bind,
+ com.google.gson.reflect,
+ com.google.gson.stream,
  oracle.core.lmx,
  oracle.core.lvf,
  oracle.jdbc,
