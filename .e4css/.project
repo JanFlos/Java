@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>.e4css</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>e4_default.css</name>
+			<type>1</type>
+			<location>C:/eclipsek/eclipse/plugins/org.eclipse.platform_4.3.0.v20130605-2000/css/e4_default.css</location>
+		</link>
+		<link>
+			<name>e4_default_win7.css</name>
+			<type>1</type>
+			<location>C:/eclipsek/eclipse/plugins/org.eclipse.platform_4.3.0.v20130605-2000/css/e4_default_win7.css</location>
+		</link>
+		<link>
+			<name>e4_default_winxp_blu.css</name>
+			<type>1</type>
+			<location>C:/eclipsek/eclipse/plugins/org.eclipse.platform_4.3.0.v20130605-2000/css/e4_default_winxp_blu.css</location>
+		</link>
+	</linkedResources>
+</projectDescription>

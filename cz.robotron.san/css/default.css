@@ -1,0 +1,19 @@
+.MWindow {
+    
+}
+
+CTabFolder {
+	swt-unselected-tabs-color: #FFFFFF #FFFFFF 100% 100%;
+	swt-outer-keyline-color: #FFFFFF;
+	swt-inner-keyline-color: #FFFFFF;
+	swt-mru-visible: false;
+ }
+ 
+ .MTrimmedWindow.topLevel { 
+ 	background-color:  #EEF2F7 #DEEBF3 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+

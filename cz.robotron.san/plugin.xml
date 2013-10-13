@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            name="cz.robotron.san"
+            application="org.eclipse.e4.ui.workbench.swt.E4Application">
+         <property
+               name="clearPersistedState"
+               value="true">
+         </property>
+         <property
+               name="applicationCSS"
+               value="platform:/plugin/cz.robotron.san/css/default.css">
+         </property>
+         <property
+               name="lifeCycleURI"
+               value="bundleclass://cz.robotron.san/cz.robotron.san.Bootstrap">
+         </property>
+         <property
+               name="appName"
+               value="cz.robotron.san">
+         </property>
+      </product>
+   </extension>
+
+</plugin>

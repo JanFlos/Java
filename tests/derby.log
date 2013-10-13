@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Sun Oct 13 20:01:39 CEST 2013:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.10.1.1 - (1458268): instance a816c00e-0141-b2fb-0c9d-00000e6eda68 
+on database directory C:\dev\Java\tests\kuna.drb with class loader sun.misc.Launcher$AppClassLoader@45033fb5 
+Loaded from file:/C:/dev/Java/tests/derby.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_10-b18
+user.dir=C:\dev\Java\tests
+os.name=Windows 7
+os.arch=amd64
+os.version=6.1
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
