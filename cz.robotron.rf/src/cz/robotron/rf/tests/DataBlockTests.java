@@ -129,7 +129,7 @@ public class DataBlockTests {
 
         DataBlock dataBlock = DataBlock.createDataBlock(_connection, "TTEST");
 
-        dataBlock.findOrCreate("name = ?", "havran");
+        dataBlock.findOrCreate("name = ? and id = ?", "havran", 2);
 
     }
 }

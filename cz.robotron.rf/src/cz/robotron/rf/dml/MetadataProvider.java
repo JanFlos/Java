@@ -31,7 +31,7 @@ public class MetadataProvider {
     private final Map<String, Integer> _columnTypes;
     private List<String>               _primaryKeyColumnsNames;
     private List<String>               _updateableColumnsNames = null;
-    private QueryDataSource            _queryDataSource;
+    private String                     _queryDataSource;
     private List<DataBlockColumn>      _allColumns;
 
     /**
@@ -114,7 +114,7 @@ public class MetadataProvider {
         assert queryDataSource != null;
         assert queryDataSource.getDMLTarget() != null;
 
-        _queryDataSource = queryDataSource;
+        _queryDataSource = queryDataSource.getDataSource();
         _allColumns = findTableColumns(connection, queryDataSource.getDataSource());
 
         _allColumnNames = getColumnNames(_allColumns);
@@ -239,7 +239,7 @@ public class MetadataProvider {
     /**
      * Getters/Setters
      */
-    public String getDmlTargetTableName() {
+    private String getDmlTargetTableName() {
         return _dmlTargetTableName;
     }
 
@@ -297,8 +297,8 @@ public class MetadataProvider {
     /**
      * @return
      */
-    public String getDataSource() {
-        return _queryDataSource.getDataSource();
+    private String getDataSource() {
+        return _queryDataSource;
     }
 
     public List<DataBlockColumn> getColumns() {

@@ -64,8 +64,7 @@ public class DataBlock {
 
     }
 
-    public void setDataSource(String dataSource) throws SQLException
-    {
+    public void setDataSource(String dataSource) throws SQLException {
         setDataSource(dataSource, null);
     }
 
@@ -174,6 +173,7 @@ public class DataBlock {
      */
     public int executeQuery() throws SQLException {
         RecordSelector recordSelector = getRecordSelector();
+        recordSelector.setDataSource(_queryDataSource.getDataSource());
         _records = recordSelector.executeQuery();
 
         // Sending this event on Event bus to inform all Observers
@@ -202,7 +202,8 @@ public class DataBlock {
         _detailRelations.add(relation);
         detail.setMasterRelation(this, joinCondition);
 
-        detail.getQueryDataSource().setWhereClause(relation.getCondition()); // Where condition must be set on datasource query
+        QueryDataSource dataSource = detail.getQueryDataSource(); 
+        dataSource.setWhereClause(relation.getCondition()); // Where condition must be set on datasource query
     }
 
     /**
@@ -273,7 +274,7 @@ public class DataBlock {
     }
 
     @Subscribe
-    public void handleSelectionChangedEvent(SortOrderChangedEvent event) throws SQLException {
+    public void handleSortOrderChangedEvent(SortOrderChangedEvent event) throws SQLException {
         setOrderBy(event.getSortedColumn());
         executeQuery();
     }
@@ -368,7 +369,7 @@ public class DataBlock {
     public RecordSelector getRecordSelector() throws SQLException {
 
         if (_recordSelector == null)
-            _recordSelector = new RecordSelector(getConnection(), getMetadataProvider());
+            _recordSelector = new RecordSelector(getConnection(), _queryDataSource.getDataSource());
         return _recordSelector;
     }
 
