@@ -41,8 +41,8 @@ public class RecordSelector {
         assert _connection != null;
         assert _dataSource != null;
 
-        _command.close();
-        _command = null;
+        if (_command != null)
+            _command.close();
 
         _command = _connection.prepareStatement(_dataSource, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         _columnCount = null;
@@ -57,13 +57,13 @@ public class RecordSelector {
      */
     public List<Record> executeQuery() throws SQLException {
 
-        if (_preparedDataSource != null && _preparedDataSource != _dataSource)
+        if (_preparedDataSource == null || !_preparedDataSource.equals(_dataSource))
             prepareCommand();
 
         List<Record> result = Lists.newArrayList();
 
-        ResultSet rs = _command.executeQuery();
-        ResultSetMetaData metaData = _command.getMetaData();
+        ResultSet rs = getCommand().executeQuery();
+        ResultSetMetaData metaData = getCommand().getMetaData();
         _columnCount = metaData.getColumnCount();
 
         Object[] data = null;
@@ -84,7 +84,7 @@ public class RecordSelector {
 
         int index = boundColumnValue.getIndex();
         Object value = boundColumnValue.getValue();
-        _command.setObject(index + 1, value);
+        getCommand().setObject(index + 1, value);
 
     }
 
@@ -94,7 +94,14 @@ public class RecordSelector {
     }
 
     public void setDataSource(String dataSource) {
-        _dataSource = dataSource;
+        if (!_dataSource.equals(dataSource))
+            _dataSource = dataSource;
+    }
+
+    public PreparedStatement getCommand() throws SQLException {
+        if (_command == null)
+            prepareCommand();
+        return _command;
     }
 
 }

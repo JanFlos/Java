@@ -5,6 +5,8 @@ package cz.robotron.rf.tests;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -17,9 +19,8 @@ import com.google.common.eventbus.EventBus;
 public class TestUtils {
 
     static ApplicationContext _appContext;
-    private static Shell _shell;
+    private static Shell      _shell;
     private static Display    _display;
-    
 
     private static ApplicationContext createApplicationContext() throws ClassNotFoundException, SQLException {
         if (_appContext == null) {
@@ -77,5 +78,22 @@ public class TestUtils {
         return _appContext;
     }
 
-}
+    public static void executeDML(Connection _connection, String statement) throws SQLException {
+        PreparedStatement prepareStatement = _connection.prepareStatement(statement);
+        prepareStatement.executeUpdate();
+        _connection.commit();
 
+    }
+
+    public static Integer selectCount(Connection _connection, String statement) throws SQLException {
+
+        PreparedStatement prepareStatement = _connection.prepareStatement(statement);
+        ResultSet resultSet = prepareStatement.executeQuery();
+        resultSet.next();
+        int result = resultSet.getInt(1);
+        resultSet.close();
+        return result;
+
+    }
+
+}

@@ -93,6 +93,7 @@ public class DataBlock {
 
     }
 
+
     /**
      * Changes the current record item value
      */
@@ -172,8 +173,8 @@ public class DataBlock {
      * 
      */
     public int executeQuery() throws SQLException {
+
         RecordSelector recordSelector = getRecordSelector();
-        recordSelector.setDataSource(_queryDataSource.getDataSource());
         _records = recordSelector.executeQuery();
 
         // Sending this event on Event bus to inform all Observers
@@ -421,5 +422,7 @@ public class DataBlock {
         List<Record> records = recordSelector.executeQuery();
 
     }
+
+
 
 }

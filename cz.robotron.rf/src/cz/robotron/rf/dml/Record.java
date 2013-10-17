@@ -30,7 +30,7 @@ public class Record {
 	}
 
 
-    public String[] getData() {
+    public String[] getStringData() {
         int count = _data.length;
         String[] result = new String[count];
         for (int i = 0; i < count; i++) {
@@ -39,6 +39,10 @@ public class Record {
         }
         return result;
 	}
+
+    public Object[] getData() {
+        return _data;
+    }
 
 	public void setData(Object[] data) {
 		_data = data;

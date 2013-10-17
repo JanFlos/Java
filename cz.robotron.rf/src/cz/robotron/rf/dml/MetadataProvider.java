@@ -239,7 +239,7 @@ public class MetadataProvider {
     /**
      * Getters/Setters
      */
-    private String getDmlTargetTableName() {
+    public String getDmlTargetTableName() {
         return _dmlTargetTableName;
     }
 

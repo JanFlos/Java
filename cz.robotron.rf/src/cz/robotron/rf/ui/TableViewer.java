@@ -42,7 +42,7 @@ public class TableViewer extends Composite {
 
     public void setDataBlock(DataBlock dataBlock) throws SQLException {
 
-        assert _dataBlock != null;
+        assert dataBlock != null;
         assert dataBlock.getMetadataProvider() != null;
         assert _table != null;
 
@@ -327,7 +327,7 @@ public class TableViewer extends Composite {
                     if (rowIndex % 2 == 1)
                         item.setBackground(_alternateRowColor);
 
-                item.setText(record.getData());
+                item.setText(record.getStringData());
 
             }
 

@@ -1,12 +1,13 @@
 package cz.robotron.rf.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import com.google.common.collect.ImmutableList;
 import cz.robotron.rf.DataBlock;
@@ -31,70 +32,103 @@ public class DataBlockTests {
         _appContext.done();
     }
 
-    @Ignore
     @Test
-    public void BuilderTest() {
+    public void testCommandBuilder() {
 
+        String command;
+        
         // Insert without returning
         MetadataProvider metadata = getDMLMetadata(false);
-        out(CommandBuilder.insertCommand(metadata));
+        command = CommandBuilder.insertCommand(metadata);
+        assertEquals(command, "{call insert into ttest (id, name, tag) values (?, ?, ?)}");
 
         // Insert with returning
         metadata = getDMLMetadata(true);
-        out(CommandBuilder.insertCommand(metadata));
+        command = CommandBuilder.insertCommand(metadata);
+        assertEquals(command, "{call insert into ttest (id, name) values (?, ?) returning id into ?}");
 
         // Update statement
-        out(CommandBuilder.updateCommand(metadata));
+        command = CommandBuilder.updateCommand(metadata);
+        assertEquals(command, "{call update ttest set name = ? where id = ?}");
 
-        out(CommandBuilder.deleteCommand(metadata));
-        // out(DMLBuilder.lockCommand("berechnungen", ImmutableList.of("name",
-        // "ber_id", "bezeichnung")));
+        command = CommandBuilder.deleteCommand(metadata);
+        assertEquals(command, "{call delete from ttest where id = ?}");
 
     }
 
-    @Ignore
     @Test
-    public void test() throws SQLException {
+    public void testPrimaryKeyCols() throws SQLException {
         QueryDataSource queryDataSource = new QueryDataSource("TTEST");
         MetadataProvider metadata = new MetadataProvider(_appContext.getConnection(), queryDataSource);
         List<String> pkCols = metadata.getPrimaryKeyColumnNames();
-
+        assertEquals(pkCols.toString(), "[id]");
     }
 
-    @Ignore
     @Test
-    public void dataBlockTest() throws SQLException {
+    public void testCRUD() throws SQLException {
+        int count;
+        
+        TestUtils.executeDML(_connection, "delete from TTEST");
 
         DataBlock dataBlock = DataBlock.createDataBlock(_connection, "TTEST");
+
         dataBlock.createRecord();
-        dataBlock.setItems(null, "Test", 1, "kuna", 25);
-        dataBlock.post();
-        dataBlock.setItem(1, "Test-Update");
+        dataBlock.setItems(0, "Test1", "Tag");
         dataBlock.post();
 
+        count = TestUtils.selectCount(_connection, "select count(*) from ttest where name = 'Test1'");
+        assertEquals(count, 1);
+
+        Object id = dataBlock.getItem(0);
+        assertNotNull(id);
+
+        dataBlock.setItem(1, "Test2");
+        dataBlock.post();
+
+        count = TestUtils.selectCount(_connection, "select count(*) from ttest where name = 'Test1'");
+        assertEquals(count, 0);
+
+        count = TestUtils.selectCount(_connection, "select count(*) from ttest where name = 'Test2'");
+        assertEquals(count, 1);
+        
     }
 
-    @Ignore
     @Test
     public void queryTest() throws SQLException {
+        TestUtils.executeDML(_connection, "delete from TTEST");
+        TestUtils.executeDML(_connection, "insert into TTEST (id, name, tag) values (1, 'kuna','tag') ");
+
         DataBlock dataBlock = DataBlock.createDataBlock(_connection, "TTEST");
         int recordCount = dataBlock.executeQuery();
-        System.out.println(recordCount);
+        dataBlock.firstRecord();
+        assertEquals(recordCount, 1);
+        assertEquals(dataBlock.getItem(0).toString(), "1");
+        assertEquals(dataBlock.getItem(1), "kuna");
+        assertEquals(dataBlock.getItem(2), "tag");
 
     }
 
     /**
      * Master Detail Test
      */
-    @Ignore
     @Test
     public void queryMasterDetailTest() throws SQLException {
+
+        TestUtils.executeDML(_connection, "delete from TTEST");
+        TestUtils.executeDML(_connection, "insert into TTEST (id, name, tag) values (1, 'kuna','tag') ");
+        TestUtils.executeDML(_connection, "insert into TTS_DETAIL (tts_id, text) values (1, 'detail') ");
+
         DataBlock master = DataBlock.createDataBlock(_connection, "TTEST");
         DataBlock detail = DataBlock.createDataBlock(_connection, "TTS_DETAIL");
-
         master.addDetailBlock(detail, "tts_id = :id");
 
-        UiTestHelper.master(master).detail(detail).run();
+        master.executeQuery();
+        master.firstRecord();
+        detail.firstRecord();
+
+        assertEquals(master.getItem(1), "kuna");
+        assertEquals(detail.getItem(1), "detail");
+        //UiTestHelper.master(master).detail(detail).run();
     }
 
     /**

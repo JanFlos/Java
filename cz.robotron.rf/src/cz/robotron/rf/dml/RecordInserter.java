@@ -72,7 +72,9 @@ public class RecordInserter {
 		List<String> returningColumns = _metadata.getReturningColumnNames();
 		for (String returningColumn : returningColumns) {
 			columnIndex = _metadata.getColumnIndex(returningColumn);
-			record[columnIndex] = _command.getObject(++outParameterIndex);
+            outParameterIndex++;
+            Object columnValue = _command.getObject(outParameterIndex);
+            record[columnIndex] = columnValue;
 		}
 
 	}
