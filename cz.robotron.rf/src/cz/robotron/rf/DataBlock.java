@@ -93,7 +93,6 @@ public class DataBlock {
 
     }
 
-
     /**
      * Changes the current record item value
      */
@@ -187,24 +186,33 @@ public class DataBlock {
 
     }
 
+    private List<Relation> getRelations() {
+        if (_detailRelations == null)
+            _detailRelations = Lists.newArrayList();
+        return _detailRelations;
+    }
+
     /**
     * @param detail
     * @param joinCondition
     */
-    public void addDetailBlock(DataBlock detail, String joinCondition) {
+    public void addDetail(DataBlock detail, String joinCondition) {
 
         assert detail != null;
         assert joinCondition != null;
 
-        if (_detailRelations == null)
-            _detailRelations = Lists.newArrayList();
+        List<Relation> relations = getRelations();
 
         Relation relation = new Relation(detail, joinCondition);
-        _detailRelations.add(relation);
+        relations.add(relation);
         detail.setMasterRelation(this, joinCondition);
 
-        QueryDataSource dataSource = detail.getQueryDataSource(); 
+        QueryDataSource dataSource = detail.getQueryDataSource();
         dataSource.setWhereClause(relation.getCondition()); // Where condition must be set on datasource query
+    }
+
+    private void setMasterRelation(DataBlock dataBlock) {
+        setMasterRelation(dataBlock, null);
     }
 
     /**
@@ -338,7 +346,7 @@ public class DataBlock {
         return _metadataProvider;
     }
 
-    private QueryDataSource getQueryDataSource() {
+    QueryDataSource getQueryDataSource() {
         assert _queryDataSource != null : "Query data source must be specified";
         return _queryDataSource;
     }
@@ -370,7 +378,7 @@ public class DataBlock {
     public RecordSelector getRecordSelector() throws SQLException {
 
         if (_recordSelector == null)
-            _recordSelector = new RecordSelector(getConnection(), _queryDataSource.getDataSource());
+            _recordSelector = new RecordSelector(getConnection(), _queryDataSource.getCanonizedDataSource());
         return _recordSelector;
     }
 
@@ -423,6 +431,22 @@ public class DataBlock {
 
     }
 
+    public String getQueryDataSourceText() {
+        return _queryDataSource.getDataSource();
+    }
 
+    public DataBlock addDetailDataBlock(String dataSource) throws SQLException {
+
+        DataBlock detail = createDataBlock(_connection, dataSource);
+
+        List<Relation> relations = getRelations();
+
+        Relation relation = new Relation(detail);
+        _detailRelations.add(relation);
+        detail.setMasterRelation(this);
+
+        return detail;
+
+    }
 
 }

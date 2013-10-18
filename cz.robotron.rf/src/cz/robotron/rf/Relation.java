@@ -4,8 +4,6 @@
 package cz.robotron.rf;
 
 import java.util.List;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 
 /**
  * @author Jan Flos
@@ -20,13 +18,14 @@ public class Relation {
         super();
         _dataBlock = dataBlock;
         _condition = condition;
-        _boundColumnNames = Lists.newArrayList();
+        if (condition == null)
+            _condition = dataBlock.getQueryDataSourceText();
 
-        for (String token : Splitter.on('=').omitEmptyStrings().trimResults().split(_condition)) {
-            if (token.startsWith(":"))
-                _boundColumnNames.add(token.substring(1).toLowerCase());
+        _boundColumnNames = CollectionUtils.extractTokens(_condition);
+    }
 
-        }
+    public Relation(DataBlock dataBlock) {
+        this(dataBlock, null);
     }
 
     /**
@@ -43,8 +42,5 @@ public class Relation {
     public List<String> getBoundColumnNames() {
         return _boundColumnNames;
     }
-
-
-
 
 }

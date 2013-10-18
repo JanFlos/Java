@@ -4,6 +4,8 @@
 package cz.robotron.rf;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import com.google.common.collect.Lists;
 
 /**
@@ -59,6 +61,20 @@ public class CollectionUtils {
             result = Lists.newArrayList(tableColumns);
         }
 
+        return result;
+    }
+
+    public static List<String> extractTokens(String text) {
+
+        List<String> result = Lists.newArrayList();
+
+        Pattern p = Pattern.compile("\\:(\\w[\\w\\d]+)");
+        Matcher m = p.matcher(text);
+
+        while (m.find()) {
+            result.add(m.group(1));
+
+        }
         return result;
     }
 

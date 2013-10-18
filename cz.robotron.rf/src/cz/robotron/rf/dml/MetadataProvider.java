@@ -114,8 +114,8 @@ public class MetadataProvider {
         assert queryDataSource != null;
         assert queryDataSource.getDMLTarget() != null;
 
-        _queryDataSource = queryDataSource.getDataSource();
-        _allColumns = findTableColumns(connection, queryDataSource.getDataSource());
+        _queryDataSource = queryDataSource.getCanonizedDataSource();
+        _allColumns = findTableColumns(connection, _queryDataSource);
 
         _allColumnNames = getColumnNames(_allColumns);
         _columnTypes = getColumnTypes(_allColumns);

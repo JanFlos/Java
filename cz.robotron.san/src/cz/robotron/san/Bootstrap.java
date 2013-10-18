@@ -46,7 +46,7 @@ public class Bootstrap {
         _detail =
             DataBlock.createDataBlock(_eclipseContext,
                                       "select sid, names.name, stats.statistic#, stats.value from v$sesstat stats, v$statname names where names.Statistic# = stats.Statistic# order by stats.statistic#");
-        _master.addDetailBlock(_detail, "sid = :sid");
+        _master.addDetail(_detail, "sid = :sid");
     }
 
     private MPart createDatablockPart(DataBlock dataBlock) {

@@ -112,7 +112,7 @@ public class DataBlockTests {
      * Master Detail Test
      */
     @Test
-    public void queryMasterDetailTest() throws SQLException {
+    public void queryMasterDetailTest1() throws SQLException {
 
         TestUtils.executeDML(_connection, "delete from TTEST");
         TestUtils.executeDML(_connection, "insert into TTEST (id, name, tag) values (1, 'kuna','tag') ");
@@ -120,7 +120,7 @@ public class DataBlockTests {
 
         DataBlock master = DataBlock.createDataBlock(_connection, "TTEST");
         DataBlock detail = DataBlock.createDataBlock(_connection, "TTS_DETAIL");
-        master.addDetailBlock(detail, "tts_id = :id");
+        master.addDetail(detail, "tts_id = :id");
 
         master.executeQuery();
         master.firstRecord();
@@ -128,7 +128,29 @@ public class DataBlockTests {
 
         assertEquals(master.getItem(1), "kuna");
         assertEquals(detail.getItem(1), "detail");
-        //UiTestHelper.master(master).detail(detail).run();
+
+    }
+
+    /**
+     * Master Detail Test
+     */
+    @Test
+    public void queryMasterDetailTest2() throws SQLException {
+
+        TestUtils.executeDML(_connection, "delete from TTEST");
+        TestUtils.executeDML(_connection, "insert into TTEST (id, name, tag) values (1, 'kuna','tag') ");
+        TestUtils.executeDML(_connection, "insert into TTS_DETAIL (tts_id, text) values (1, 'detail') ");
+
+        DataBlock master = DataBlock.createDataBlock(_connection, "TTEST");
+        DataBlock detail = master.addDetailDataBlock("select * from TTS_DETAIL where tts_id = :id");
+
+        master.executeQuery();
+        master.firstRecord();
+        detail.firstRecord();
+
+        assertEquals(master.getItem(1), "kuna");
+        assertEquals(detail.getItem(1), "detail");
+
     }
 
     /**

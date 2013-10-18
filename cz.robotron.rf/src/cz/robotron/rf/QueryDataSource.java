@@ -35,11 +35,6 @@ public class QueryDataSource {
                 _dmlTarget = _queryDataSource;
         }
 
-        // if parameter defined then make where clause
-
-        if (_datasourceType == DataSourceTypeEnum.FROM_QUERY_CLAUSE)
-            assert (_dmlTarget != null) : "DML Target not specified";
-
     }
 
     public QueryDataSource(String dataSource) {
@@ -70,12 +65,13 @@ public class QueryDataSource {
     }
 
     public int getParameterCount() {
-        return CharMatcher.is(':').countIn(_whereClause);
+        int count = CharMatcher.is('?').countIn(_whereClause);
+        count = count + CharMatcher.is('?').countIn(_queryDataSource);
+        return count;
     }
 
-
     public void setWhereClause(String condition) {
-        _whereClause = condition.replaceAll("\\:\\w[\\w\\d]+", "?");
+        _whereClause = condition;
     }
 
     public void setOrderByClause(String... sortedColumns) {
@@ -83,7 +79,7 @@ public class QueryDataSource {
         String orderByClause = "";
 
         for (String sortedColumn : sortedColumns) {
-            
+
             assert sortedColumn.matches("\\w[\\w\\d]+(\\s+asc|\\s+desc)?");
 
             if (orderByClause != "")
@@ -95,5 +91,8 @@ public class QueryDataSource {
 
     }
 
-}
+    public String getCanonizedDataSource() {
+        return getDataSource().replaceAll("\\:\\w[\\w\\d]+", "?");
+    }
 
+}
