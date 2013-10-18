@@ -17,14 +17,14 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.osgi.service.event.Event;
-import cz.robotron.rf.DataBlock;
+import cz.robotron.rf.IDataBlock;
 import cz.robotron.rf.ui.TableViewer;
 
 public class PartControler {
 
     @Inject
     @Optional
-    DataBlock      _dataBlock;
+    IDataBlock      _dataBlock;
 
     private TableViewer _tableViewer;
 
@@ -33,7 +33,7 @@ public class PartControler {
 	}
 	
 	@PostConstruct
-    public void postConstruct(Composite parent, @Optional DataBlock dataBlock) throws SQLException {
+    public void postConstruct(Composite parent, @Optional IDataBlock dataBlock) throws SQLException {
 
         GridLayout gl_parent = new GridLayout(1, false);
         gl_parent.marginHeight = 0;

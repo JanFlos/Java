@@ -78,12 +78,6 @@ public class TestUtils {
         return _appContext;
     }
 
-    public static void executeDML(Connection _connection, String statement) throws SQLException {
-        PreparedStatement prepareStatement = _connection.prepareStatement(statement);
-        prepareStatement.executeUpdate();
-        _connection.commit();
-
-    }
 
     public static Integer selectCount(Connection _connection, String statement) throws SQLException {
 

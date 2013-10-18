@@ -21,11 +21,25 @@ import cz.robotron.rf.events.ContentChangedEvent;
 import cz.robotron.rf.events.SelectionChangedEvent;
 import cz.robotron.rf.events.SortOrderChangedEvent;
 
+public class DataBlockFactory {
+
+    private final Connection _connection;
+
+    public DataBlockFactory(Connection connection) {
+        _connection = connection;
+    }
+
+    public IDataBlock createDataBlock(String dataSource) throws SQLException {
+        return DataBlock.createDataBlock(_connection, dataSource);
+    }
+
+}
+
 /**
  * @author Jan Flos
  * 
  */
-public class DataBlock {
+class DataBlock implements IDataBlock {
 
     private QueryDataSource   _queryDataSource;
     private ChangeTracker     _changeTracker;
@@ -64,6 +78,7 @@ public class DataBlock {
 
     }
 
+    @Override
     public void setDataSource(String dataSource) throws SQLException {
         setDataSource(dataSource, null);
     }
@@ -78,6 +93,7 @@ public class DataBlock {
      * Creates a new record in the block
      * @throws SQLException 
      */
+    @Override
     public void createRecord() throws SQLException {
 
         Object[] data = new Object[getMetadataProvider().getColumnCount()];
@@ -96,6 +112,7 @@ public class DataBlock {
     /**
      * Changes the current record item value
      */
+    @Override
     public void setItem(String columnName, Object value) {
         assert _metadataProvider != null;
 
@@ -107,6 +124,7 @@ public class DataBlock {
     /**
      * Changes the current record item value
      */
+    @Override
     public void setItem(int columnIndex, Object value) {
         assert _currentRecord != null;
 
@@ -114,6 +132,7 @@ public class DataBlock {
         getChangeTracker().recordUpdated(_currentRecord);
     }
 
+    @Override
     public Object getItem(int columnIndex) {
         assert _currentRecord != null;
 
@@ -125,6 +144,7 @@ public class DataBlock {
      * Posts changed records to database
      * @throws SQLException 
      */
+    @Override
     public void post() throws SQLException {
 
         getRecordSaver().post(getChangeTracker().getChangedRecords());
@@ -134,6 +154,7 @@ public class DataBlock {
     /**
      * Commits all changes to the database
      */
+    @Override
     public void commit() {
         // TODO Auto-generated method stub
 
@@ -159,6 +180,7 @@ public class DataBlock {
      * @param string
      * @param i
      */
+    @Override
     public void setItems(Object... objects) {
         for (int j = 0; j < objects.length; j++) {
             setItem(j, objects[j]);
@@ -171,6 +193,7 @@ public class DataBlock {
      * @throws SQLException 
      * 
      */
+    @Override
     public int executeQuery() throws SQLException {
 
         RecordSelector recordSelector = getRecordSelector();
@@ -196,7 +219,8 @@ public class DataBlock {
     * @param detail
     * @param joinCondition
     */
-    public void addDetail(DataBlock detail, String joinCondition) {
+    @Override
+    public void addDetailDataBlock(IDataBlock detail, String joinCondition) {
 
         assert detail != null;
         assert joinCondition != null;
@@ -218,13 +242,15 @@ public class DataBlock {
     /**
      * @param dataBlock
      */
-    private void setMasterRelation(DataBlock dataBlock, String joinCondition) {
+    @Override
+    public void setMasterRelation(DataBlock dataBlock, String joinCondition) {
 
         observeOn(dataBlock); // Observe changes von data block
         _masterRelation = new Relation(dataBlock, joinCondition);
 
     }
 
+    @Override
     public List<Parameter> buildParameterList(List<String> columnNames) throws SQLException {
         List<Parameter> result = Lists.newArrayList();
         int index;
@@ -242,12 +268,13 @@ public class DataBlock {
     /**
      * Queries all details, if not coordination deffered 
      */
+    @Override
     public void queryMasterDetail(Relation relation) throws SQLException {
 
         assert relation != null;
 
         List<Parameter> queryParameters = buildParameterList(relation.getBoundColumnNames());
-        DataBlock dataBlock = relation.getDataBlock();
+        IDataBlock dataBlock = relation.getDataBlock();
 
         // set the parameter values
         if (queryParameters != null) {
@@ -265,23 +292,27 @@ public class DataBlock {
     /**
      * Sets the paramaeter for parametrised queries e.g. Master-Detail 
      */
-    private void setQueryParameter(Parameter parameter) throws SQLException {
+    @Override
+    public void setQueryParameter(Parameter parameter) throws SQLException {
         RecordSelector recordSelector = getRecordSelector();
         recordSelector.setParameter(parameter);
 
     }
 
+    @Override
     public void synchronizeSelection(SelectionChangedEvent selectionChange) throws SQLException {
 
         setRecord(selectionChange.getSelectionIndex());
 
     }
 
+    @Override
     @Subscribe
     public void handleSelectionChangedEvent(SelectionChangedEvent event) throws SQLException {
         synchronizeSelection(event);
     }
 
+    @Override
     @Subscribe
     public void handleSortOrderChangedEvent(SortOrderChangedEvent event) throws SQLException {
         setOrderBy(event.getSortedColumn());
@@ -292,17 +323,20 @@ public class DataBlock {
      * Jump to first selected record 
      * @throws SQLException 
      */
+    @Override
     public void firstRecord() throws SQLException {
         setRecord(0);
 
     }
 
+    @Override
     public void lastRecord() throws SQLException {
         if (_records != null && _records.size() > 0) {
             setRecord(_records.size() - 1);
         }
     }
 
+    @Override
     public void nextRecord() throws SQLException {
         if (_records != null && _currentRecord != null) {
             int recordCount = _records.size();
@@ -340,30 +374,36 @@ public class DataBlock {
 
     }
 
+    @Override
     public MetadataProvider getMetadataProvider() throws SQLException {
         if (_metadataProvider == null)
             _metadataProvider = new MetadataProvider(getConnection(), getQueryDataSource());
         return _metadataProvider;
     }
 
-    QueryDataSource getQueryDataSource() {
+    @Override
+    public QueryDataSource getQueryDataSource() {
         assert _queryDataSource != null : "Query data source must be specified";
         return _queryDataSource;
     }
 
+    @Override
     public List<Record> getRecords() {
         return _records;
 
     }
 
+    @Override
     public void observeOn(Object object) {
         getEventBus().register(object);
     }
 
+    @Override
     public boolean isDefferedCoordination() {
         return _defferedCoordination;
     }
 
+    @Override
     public void setDefferedCoordination(boolean defferedCoordination) {
         _defferedCoordination = defferedCoordination;
     }
@@ -375,6 +415,7 @@ public class DataBlock {
         return _eventBus;
     }
 
+    @Override
     public RecordSelector getRecordSelector() throws SQLException {
 
         if (_recordSelector == null)
@@ -382,11 +423,13 @@ public class DataBlock {
         return _recordSelector;
     }
 
+    @Override
     public Connection getConnection() {
         assert _connection != null;
         return _connection;
     }
 
+    @Override
     public RecordSaver getRecordSaver() throws SQLException {
 
         if (_recordSaver == null)
@@ -395,6 +438,7 @@ public class DataBlock {
         return _recordSaver;
     }
 
+    @Override
     public ChangeTracker getChangeTracker() {
         if (_changeTracker == null)
             _changeTracker = new ChangeTracker();
@@ -402,6 +446,7 @@ public class DataBlock {
         return _changeTracker;
     }
 
+    @Override
     public void setOrderBy(String... sortedColumn) {
         assert _queryDataSource != null;
         _queryDataSource.setOrderByClause(sortedColumn);
@@ -414,6 +459,7 @@ public class DataBlock {
         return result;
     }
 
+    @Override
     public String getName() {
         String result = _queryDataSource.getDMLTarget();
         if (result == null)
@@ -424,6 +470,7 @@ public class DataBlock {
     /*
      * Try to find a record, if not the create
      */
+    @Override
     public void findOrCreate(String praedikat, Object... values) throws SQLException {
         RecordSelector recordSelector = getRecordSelector();
         recordSelector.setOneTimeWhere(praedikat, values);
@@ -431,11 +478,13 @@ public class DataBlock {
 
     }
 
+    @Override
     public String getQueryDataSourceText() {
         return _queryDataSource.getDataSource();
     }
 
-    public DataBlock addDetailDataBlock(String dataSource) throws SQLException {
+    @Override
+    public IDataBlock addDetailDataBlock(String dataSource) throws SQLException {
 
         DataBlock detail = createDataBlock(_connection, dataSource);
 
@@ -449,4 +498,12 @@ public class DataBlock {
 
     }
 
+    @Override
+    public IDataBlock addDetailDataBlock(String dataSource, String joinCondition) throws SQLException {
+
+        DataBlock detail = createDataBlock(_connection, dataSource);
+        addDetailDataBlock(detail, joinCondition);
+        return detail;
+
+    }    
 }
