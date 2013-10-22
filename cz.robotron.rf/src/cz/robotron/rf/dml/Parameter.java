@@ -1,21 +1,21 @@
 package cz.robotron.rf.dml;
 
-
 public class Parameter {
 
-    String _columnName;
+    //String _columnName;
     Object _value;
     int    _index;
+    String _name;
 
-    public Parameter(String boundColumnName, int index, Object value) {
+    public Parameter(String name, int index, Object value) {
         super();
-        _columnName = boundColumnName;
+        _name = name;
         _value = value;
         _index = index;
     }
 
-    public String getColumnName() {
-        return _columnName;
+    public String getName() {
+        return _name;
     }
 
     public Object getValue() {

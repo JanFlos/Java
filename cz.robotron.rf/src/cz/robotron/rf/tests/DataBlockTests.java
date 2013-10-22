@@ -12,9 +12,9 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import com.google.common.collect.ImmutableList;
+import cz.robotron.rf.DataBlock;
 import cz.robotron.rf.DataBlockColumn;
 import cz.robotron.rf.DataBlockFactory;
-import cz.robotron.rf.IDataBlock;
 import cz.robotron.rf.QueryDataSource;
 import cz.robotron.rf.dml.CommandBuilder;
 import cz.robotron.rf.dml.MetadataProvider;
@@ -78,7 +78,7 @@ public class DataBlockTests {
 
         _dml.execute("delete from TTEST");
 
-        IDataBlock dataBlock = _factory.createDataBlock("TTEST");
+        DataBlock dataBlock = _factory.createDataBlock("TTEST");
 
         dataBlock.createRecord();
         dataBlock.setItems(0, "Test1", "Tag");
@@ -106,7 +106,7 @@ public class DataBlockTests {
         _dml.execute("delete from TTEST");
         _dml.execute("insert into TTEST (id, name, tag) values (1, 'kuna','tag') ");
 
-        IDataBlock dataBlock = _factory.createDataBlock("TTEST");
+        DataBlock dataBlock = _factory.createDataBlock("TTEST");
         int recordCount = dataBlock.executeQuery();
         dataBlock.firstRecord();
         assertEquals(recordCount, 1);
@@ -126,9 +126,9 @@ public class DataBlockTests {
         _dml.execute("insert into TTEST (id, name, tag) values (1, 'kuna','tag') ");
         _dml.execute("insert into TTS_DETAIL (tts_id, text) values (1, 'detail') ");
 
-        IDataBlock master = _factory.createDataBlock("TTEST");
-        IDataBlock detail = _factory.createDataBlock("TTS_DETAIL");
-        master.addDetail(detail, "tts_id = :id");
+        DataBlock master = _factory.createDataBlock("TTEST");
+        DataBlock detail = _factory.createDataBlock("TTS_DETAIL");
+        master.addDetailDataBlock(detail, "tts_id = :id");
 
         master.executeQuery();
         master.firstRecord();
@@ -149,8 +149,8 @@ public class DataBlockTests {
         _dml.execute("insert into TTEST (id, name, tag) values (1, 'kuna','tag') ");
         _dml.execute("insert into TTS_DETAIL (tts_id, text) values (1, 'detail') ");
 
-        IDataBlock master = _factory.createDataBlock("TTEST");
-        IDataBlock detail = master.addDetailDataBlock("select * from TTS_DETAIL where tts_id = :id");
+        DataBlock master = _factory.createDataBlock("TTEST");
+        DataBlock detail = master.addDetailDataBlock("select * from TTS_DETAIL where tts_id = :id");
 
         master.executeQuery();
         master.firstRecord();
@@ -164,11 +164,11 @@ public class DataBlockTests {
     @Test
     public void saveColumnWidths() throws SQLException {
 
-        IDataBlock dbUiTables = _factory.createDataBlock("UI_TABLES");
-        IDataBlock dbBerechnungen = _factory.createDataBlock("BERECHNUNGEN");
-        IDataBlock dbColumns = dbUiTables.addDetailDataBlock("UIT_COLUMNS", "UIT_ID = :ID");
+        DataBlock dbUiTables = _factory.createDataBlock("UI_TABLES");
+        DataBlock dbBerechnungen = _factory.createDataBlock("BERECHNUNGEN");
+        DataBlock dbColumns = dbUiTables.addDetailDataBlock("UIT_COLUMNS", "UIT_ID = :ID");
 
-        dbUiTables.findOrCreate("id", "UIT_TABLES");
+        dbUiTables.findFirstRecord("id", "UIT_TABLES");
         TableViewer viewer = new TableViewer(null);
         viewer.setDataBlock(dbBerechnungen);
 
@@ -178,7 +178,7 @@ public class DataBlockTests {
         for (TableColumn tableColumn : columns) {
             width = tableColumn.getWidth();
             name  = (String) tableColumn.getData();
-            dbColumns.findOrCreate("name", name);
+            dbColumns.findFirstRecord("name", name);
             dbColumns.setItem("width", width);
         }
         dbColumns.post();
@@ -191,7 +191,7 @@ public class DataBlockTests {
     @Test
     @Ignore
     public void sortTest() throws SQLException {
-        IDataBlock dataBlock = _factory.createDataBlock("BERECHNUNGEN");
+        DataBlock dataBlock = _factory.createDataBlock("BERECHNUNGEN");
         //dataBlock.setOrderBy("name", "tag");
         //dataBlock.executeQuery();
         UiTestHelper.block(dataBlock).run();
@@ -213,11 +213,33 @@ public class DataBlockTests {
 
     }
 
-    public void testFindOrCreate() throws SQLException {
+    @Test
+    public void testFind() throws SQLException {
 
-        IDataBlock dataBlock = _factory.createDataBlock("TTEST");
+        _dml.execute("delete from TTEST");
+        _dml.execute("insert into TTEST (id, name, tag) values (1, 'havran','tag') ");
+        _dml.execute("insert into TTEST (id, name, tag) values (2, 'kuna','tag2') ");
+        _dml.execute("insert into TTEST (id, name, tag) values (3, 'kuna2','tag3') ");
 
-        dataBlock.findOrCreate("name = ? and id = ?", "havran", 2);
+        DataBlock dataBlock = _factory.createDataBlock("TTEST");
+
+        /*
+        dataBlock.enterQuery();
+        dataBlock.setItem("name", "havran");
+        dataBlock.executeQuery();
+        */
+
+        dataBlock.tryCreateRecord("name", "havran");
+
+        System.out.println(dataBlock.getCurrentRecord());
 
     }
+
+    @Test
+    public void TestTryCreate() throws SQLException {
+        DataBlock dataBlock = _factory.createDataBlock("TTEST");
+        dataBlock.tryCreateRecord("(name)(id, name, tag)", "4", "havran", "tag4");
+
+    }
+
 }

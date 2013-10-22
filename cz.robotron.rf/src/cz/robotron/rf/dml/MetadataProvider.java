@@ -305,4 +305,8 @@ public class MetadataProvider {
         return _allColumns;
     }
 
+    public String getColumnName(int i) {
+        return _allColumnNames.get(i);
+    }
+
 }

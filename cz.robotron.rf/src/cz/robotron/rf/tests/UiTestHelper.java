@@ -5,13 +5,13 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Shell;
-import cz.robotron.rf.IDataBlock;
+import cz.robotron.rf.DataBlock;
 import cz.robotron.rf.ui.TableViewer;
 
 public class UiTestHelper {
 
-    static IDataBlock     _master;
-    static IDataBlock     _detail;
+    static DataBlock     _master;
+    static DataBlock     _detail;
     private static Color _alternateRowColor;
 
     public static RGB hex2Rgb(String colorStr) {
@@ -56,17 +56,17 @@ public class UiTestHelper {
             _alternateRowColor.dispose();
     }
 
-    public static UiTestHelper master(IDataBlock dataBlock) {
+    public static UiTestHelper master(DataBlock dataBlock) {
         _master = dataBlock;
         return null;
     }
 
-    public static UiTestHelper detail(IDataBlock dataBlock) {
+    public static UiTestHelper detail(DataBlock dataBlock) {
         _detail = dataBlock;
         return null;
     }
 
-    public static UiTestHelper block(IDataBlock dataBlock) {
+    public static UiTestHelper block(DataBlock dataBlock) {
         _master = dataBlock;
         return null;
     }

@@ -3,6 +3,7 @@
  */
 package cz.robotron.rf.dml;
 
+import java.util.Arrays;
 import cz.robotron.rf.constants.RecordStatusEnum;
 
 /**
@@ -81,6 +82,11 @@ public class Record {
         
         return _data[columnIndex];
 
+    }
+
+    @Override
+    public String toString() {
+        return "Record [_data=" + Arrays.toString(_data) + ", _status=" + _status + "]";
     }
 
     /**

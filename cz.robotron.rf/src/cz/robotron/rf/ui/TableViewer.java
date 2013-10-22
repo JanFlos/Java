@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import cz.robotron.rf.DataBlockColumn;
-import cz.robotron.rf.IDataBlock;
+import cz.robotron.rf.DataBlock;
 import cz.robotron.rf.constants.SortOrderEnum;
 import cz.robotron.rf.dml.MetadataProvider;
 import cz.robotron.rf.dml.Record;
@@ -33,14 +33,14 @@ public class TableViewer extends Composite {
 
     private static final String COLUMN_NAME = "columnName";
     Table                       _table;
-    IDataBlock                   _dataBlock;
+    DataBlock                   _dataBlock;
     private MetadataProvider    _metadataProvider;
     private EventBus            _eventBus;
     private Color               _alternateRowColor;
     private Menu                _headerMenu;
     private MenuItem            _hideMenuItem;
 
-    public void setDataBlock(IDataBlock dataBlock) throws SQLException {
+    public void setDataBlock(DataBlock dataBlock) throws SQLException {
 
         assert dataBlock != null;
         assert dataBlock.getMetadataProvider() != null;
@@ -119,7 +119,7 @@ public class TableViewer extends Composite {
         this(parent, null);
     }
 
-    public TableViewer(Composite parent, IDataBlock dataBlock) throws SQLException {
+    public TableViewer(Composite parent, DataBlock dataBlock) throws SQLException {
         super(parent, SWT.NONE);
         setLayout(new GridLayout(1, false));
         this.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));

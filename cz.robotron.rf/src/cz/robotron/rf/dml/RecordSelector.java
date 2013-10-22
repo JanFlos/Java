@@ -25,6 +25,13 @@ public class RecordSelector {
     private String            _preparedDataSource;
 
     static Logger             log = Logger.getLogger(RecordSelector.class);
+    private List<Parameter>   _queryParameters;
+    private List<Parameter>   _oneTimeQueryParameters;
+    private boolean           _resetQueryParameters;
+
+    public List<Parameter> getQueryParameters() {
+        return _queryParameters;
+    }
 
     /**
     * @param metadata
@@ -36,17 +43,22 @@ public class RecordSelector {
 
     }
 
-    public void prepareCommand() throws SQLException {
+    public RecordSelector(Connection connection) throws SQLException {
+        this(connection, null);
+    }
+
+    private void prepareCommand(String dataSource) throws SQLException {
 
         assert _connection != null;
-        assert _dataSource != null;
+        assert dataSource != null;
 
         if (_command != null)
             _command.close();
 
-        _command = _connection.prepareStatement(_dataSource, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+        _command = _connection.prepareStatement(dataSource, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         _columnCount = null;
-        _preparedDataSource = _dataSource;
+        _preparedDataSource = dataSource;
+        _resetQueryParameters = true;
 
     }
 
@@ -57,13 +69,26 @@ public class RecordSelector {
      */
     public List<Record> executeQuery() throws SQLException {
 
-        if (_preparedDataSource == null || !_preparedDataSource.equals(_dataSource))
-            prepareCommand();
+        String dataSource = getDataSource();
+
+        if ((_preparedDataSource == null) || !_preparedDataSource.equals(dataSource)) {
+            prepareCommand(dataSource);
+        }
+
+        // Set the parameters of the query
+        if (hasResetQueryParameters())
+            resetQueryParameters();
+
+        // Let the one Time parameter any more
+        if (hasOneTimeParameters()) {
+            _oneTimeQueryParameters = null;
+        }
 
         List<Record> result = Lists.newArrayList();
+        assert _command != null;
 
-        ResultSet rs = getCommand().executeQuery();
-        ResultSetMetaData metaData = getCommand().getMetaData();
+        ResultSet rs = _command.executeQuery();
+        ResultSetMetaData metaData = _command.getMetaData();
         _columnCount = metaData.getColumnCount();
 
         Object[] data = null;
@@ -80,28 +105,81 @@ public class RecordSelector {
         return result;
     }
 
-    public void setParameter(Parameter boundColumnValue) throws SQLException {
-
-        int index = boundColumnValue.getIndex();
-        Object value = boundColumnValue.getValue();
-        getCommand().setObject(index + 1, value);
-
+    private boolean hasOneTimeParameters() {
+        return _oneTimeQueryParameters != null;
     }
 
-    public void setOneTimeWhere(String praedikat, Object[] values) {
-        // TODO Auto-generated method stub
+    private boolean hasResetQueryParameters() {
+        return _resetQueryParameters && (_queryParameters != null || _oneTimeQueryParameters != null);
+    }
+
+    private void resetQueryParameters() throws SQLException {
+
+        assert _command != null;
+
+        int index = 0;
+
+        if (_queryParameters != null) {
+
+            Object value;
+
+            for (Parameter parameter : _queryParameters) {
+                index++;
+                _command.setObject(index, parameter.getValue());
+            }
+            _resetQueryParameters = false;
+
+        }
+
+        if (_oneTimeQueryParameters != null) {
+
+            for (Parameter parameter : _oneTimeQueryParameters) {
+                index++;
+                _command.setObject(index, parameter.getValue());
+            }
+
+            _resetQueryParameters = false;
+
+        }
 
     }
 
     public void setDataSource(String dataSource) {
-        if (!_dataSource.equals(dataSource))
+        if ((_dataSource == null) || (!_dataSource.equals(dataSource)))
             _dataSource = dataSource;
     }
 
-    public PreparedStatement getCommand() throws SQLException {
-        if (_command == null)
-            prepareCommand();
-        return _command;
+    public int getParameterCount() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    public void setQueryParameters(List<Parameter> queryParameters) throws SQLException {
+        _queryParameters = queryParameters;
+        _resetQueryParameters = true;
+    }
+
+    public String getDataSource() {
+
+        return (!hasOneTimeParameters() ? _dataSource : String.format("select * from (%s) where %s", _dataSource, getOneTimeWhere()));
+    }
+
+    private Object getOneTimeWhere() {
+        String result = "";
+
+        if (hasOneTimeParameters()) {
+            for (int i = 0; i < _oneTimeQueryParameters.size(); i++) {
+                Parameter parameter = _oneTimeQueryParameters.get(i);
+                result = result + (i > 0 ? " and " : "") + parameter.getName() + " = ?";
+            }
+        }
+
+        return result;
+    }
+
+    public void setOneTimeParameters(List<Parameter> parameters) {
+        _oneTimeQueryParameters = parameters;
+        _resetQueryParameters = true;
     }
 
 }

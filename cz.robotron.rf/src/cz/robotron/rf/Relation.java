@@ -10,11 +10,11 @@ import java.util.List;
  *
  */
 public class Relation {
-    IDataBlock   _dataBlock;
+    DataBlock   _dataBlock;
     String       _condition;
     List<String> _boundColumnNames;
 
-    public Relation(IDataBlock detail, String condition) {
+    public Relation(DataBlock detail, String condition) {
         super();
         _dataBlock = detail;
         _condition = condition;
@@ -31,7 +31,7 @@ public class Relation {
     /**
      * @return the dataBlock
      */
-    public IDataBlock getDataBlock() {
+    public DataBlock getDataBlock() {
         return _dataBlock;
     }
 
