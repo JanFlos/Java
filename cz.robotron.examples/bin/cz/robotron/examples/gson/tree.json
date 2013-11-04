@@ -1,0 +1,25 @@
+[
+  {
+    "name": "Kuna",
+    "childNodes": [
+      { "name": "Child1", 
+        "childNodes": [ { "name": "java.com.org" }, { "name": "Child3" } ] },
+      { "name": "Child2" }, 
+      { "name": "rds.de.ro" },
+      { "name": "san" },
+      { "name": "Next2" }
+    ]
+  },
+  {
+    "name": "Kuna3",
+    "childNodes": [
+      { "name": "Child1", 
+        "childNodes": [ { "name": "Child2" }, { "name": "Child3" } ] },
+      { "name": "Child2" }, 
+      { "name": "Next" },
+      { "name": "Child3" },
+      { "name": "Next2" }
+    ]
+  }
+  
+]

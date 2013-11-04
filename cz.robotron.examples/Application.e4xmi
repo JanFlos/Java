@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmi:id="_xMpYIEMbEeOkN7t_KEKdJQ" elementId="org.eclipse.e4.ide.application">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_xMpYIUMbEeOkN7t_KEKdJQ" label="test.treefilter" width="600" height="400">
+    <children xsi:type="advanced:PerspectiveStack" xmi:id="_xMp_REMbEeOkN7t_KEKdJQ" selectedElement="_xMp_RUMbEeOkN7t_KEKdJQ">
+      <children xsi:type="advanced:Perspective" xmi:id="_xMp_RUMbEeOkN7t_KEKdJQ" selectedElement="_zGaEUEQGEeOc_Y0CWiS7dA">
+        <children xsi:type="basic:Part" xmi:id="_zGaEUEQGEeOc_Y0CWiS7dA" elementId="cz.robotron.examples.mainpart" contributionURI="bundleclass://cz.robotron.examples/cz.robotron.examples.parts._001_FilteredTreeAndGson" label="Examples"/>
+      </children>
+    </children>
+  </children>
+  <addons xmi:id="_xMpYIkMbEeOkN7t_KEKdJQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_xMpYI0MbEeOkN7t_KEKdJQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_xMpYJEMbEeOkN7t_KEKdJQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_xMpYJUMbEeOkN7t_KEKdJQ" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_xMpYJkMbEeOkN7t_KEKdJQ" elementId="org.eclipse.e4.ui.workbench.handler.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
+  <addons xmi:id="_xMpYJ0MbEeOkN7t_KEKdJQ" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_xMpYKEMbEeOkN7t_KEKdJQ" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+</application:Application>

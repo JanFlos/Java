@@ -10,19 +10,34 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>e4_classic_win7.css</name>
+			<type>1</type>
+			<location>C:/eclipsek/eclipse/plugins/org.eclipse.platform_4.3.1.v20130911-1000/css/e4_classic_win7.css</location>
+		</link>
+		<link>
+			<name>e4_classic_winxp.css</name>
+			<type>1</type>
+			<location>C:/eclipsek/eclipse/plugins/org.eclipse.platform_4.3.1.v20130911-1000/css/e4_classic_winxp.css</location>
+		</link>
+		<link>
 			<name>e4_default.css</name>
 			<type>1</type>
-			<location>C:/eclipsek/eclipse/plugins/org.eclipse.platform_4.3.0.v20130605-2000/css/e4_default.css</location>
+			<location>C:/eclipsek/eclipse/plugins/org.eclipse.platform_4.3.1.v20130911-1000/css/e4_default.css</location>
 		</link>
 		<link>
 			<name>e4_default_win7.css</name>
 			<type>1</type>
-			<location>C:/eclipsek/eclipse/plugins/org.eclipse.platform_4.3.0.v20130605-2000/css/e4_default_win7.css</location>
+			<location>C:/eclipsek/eclipse/plugins/org.eclipse.platform_4.3.1.v20130911-1000/css/e4_default_win7.css</location>
 		</link>
 		<link>
 			<name>e4_default_winxp_blu.css</name>
 			<type>1</type>
-			<location>C:/eclipsek/eclipse/plugins/org.eclipse.platform_4.3.0.v20130605-2000/css/e4_default_winxp_blu.css</location>
+			<location>C:/eclipsek/eclipse/plugins/org.eclipse.platform_4.3.1.v20130911-1000/css/e4_default_winxp_blu.css</location>
+		</link>
+		<link>
+			<name>e4_default_winxp_olv.css</name>
+			<type>1</type>
+			<location>C:/eclipsek/eclipse/plugins/org.eclipse.platform_4.3.1.v20130911-1000/css/e4_default_winxp_olv.css</location>
 		</link>
 	</linkedResources>
 </projectDescription>

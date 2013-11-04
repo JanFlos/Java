@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            name="cz.robotron.exa"
+            application="org.eclipse.e4.ui.workbench.swt.E4Application">
+         <property
+               name="clearPersistedState"
+               value="true">
+         </property>
+         <property
+               name="appName"
+               value="cz.robotron.snipptes">
+         </property>
+         <property
+               name="lifeCycleURI"
+               value="bundleclass://cz.robotron.examples/cz.robotron.examples.Bootstrap">
+         </property>
+      </product>
+   </extension>
+
+</plugin>

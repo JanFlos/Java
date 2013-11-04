@@ -498,7 +498,7 @@ public class DataBlock {
     }
 
     public void setQueryParameters(List<Parameter> queryParameters) throws SQLException {
-        _recordSelector.setQueryParameters(queryParameters);
+        getRecordSelector().setQueryParameters(queryParameters);
 
     }
 
