@@ -10,7 +10,6 @@
  *******************************************************************************/
 package cz.robotron.examples.parts;
 
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.beans.BeanProperties;
@@ -18,14 +17,13 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.property.list.DelegatingListProperty;
 import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.FilteredTree;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -35,8 +33,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import cz.robotron.examples.Utils;
 import cz.robotron.examples.jface.MyPatternFilter;
-import cz.robotron.examples.jface.Snippet026TreeViewerTabEditing.MyModel;
-import cz.robotron.examples.xtend.Persons;
+import cz.robotron.examples.xtend.PersonGroup;
+import cz.robotron.examples.xtend.PersonList;
 import cz.robotron.examples.xtend.TestData;
 
 public class _005_TreeWithViewerSupport {
@@ -58,11 +56,10 @@ public class _005_TreeWithViewerSupport {
             tree.setHeaderVisible(true);
             tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-            String[] propertyNames = new String[] { "lastName", "firstName", "address.street", "address.city" };
+            String[] propertyNames = new String[] { "name", "lastName", "firstName", "address.street", "address.city" };
             createTreeColumns(_treeViewer, propertyNames);
 
-            final Persons input = new Persons();
-            input.setChilds(TestData.getPersonData());
+            final Object input = TestData.getRoot();
 
             ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(new IObservableFactory() {
 
@@ -75,17 +72,25 @@ public class _005_TreeWithViewerSupport {
             _treeViewer.setContentProvider(contentProvider);
 
             IListProperty childrenProp = new DelegatingListProperty() {
-                IListProperty inputChildren = BeanProperties.list(Persons.class, "childs");
+                IListProperty root                = BeanProperties.list(PersonGroup.class, "lists");
+                IListProperty personGroupChildren = BeanProperties.list(PersonList.class, "persons");
 
                 @Override
                 protected IListProperty doGetDelegate(Object source) {
-                    if (source instanceof Persons)
-                        return inputChildren;
+                    if (source instanceof PersonList)
+                        return personGroupChildren;
+
+                    else if (source instanceof PersonGroup)
+                        return root;
+
                     return null;
+
                 }
             };
 
-            ViewerSupport.bind(_treeViewer, input, childrenProp, BeanProperties.values(propertyNames));
+            IValueProperty[] valueProperties = BeanProperties.values(propertyNames);
+            
+            ViewerSupport.bind(_treeViewer, input, childrenProp, valueProperties);
 
         } catch (Exception e) {
             Utils.showException("Cannot create ViewerSupport for a Table", e);
@@ -108,38 +113,4 @@ public class _005_TreeWithViewerSupport {
     public void setFocus() {
         _treeViewer.getControl().setFocus();
     }
-}
-
-class MyContentProvider implements ITreeContentProvider {
-
-    @Override
-    public Object[] getElements(Object inputElement) {
-        List list = (List) inputElement;
-        return list.toArray();
-    }
-
-    @Override
-    public void dispose() {}
-
-    @Override
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
-
-    @Override
-    public Object[] getChildren(Object parentElement) {
-        return getElements(parentElement);
-    }
-
-    @Override
-    public Object getParent(Object element) {
-        if (element == null) {
-            return null;
-        }
-        return ((MyModel) element).parent;
-    }
-
-    @Override
-    public boolean hasChildren(Object element) {
-        return ((MyModel) element).child.size() > 0;
-    }
-
 }

@@ -1,6 +1,6 @@
 package cz.robotron.examples.xtend;
 
-import cz.robotron.examples.xtend.Person;
+import cz.robotron.examples.xtend.PersonList;
 import cz.robotron.xtend.annotations.Observable;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -8,17 +8,17 @@ import java.util.List;
 
 @Observable
 @SuppressWarnings("all")
-public class Persons {
-  private List<Person> childs;
+public class PersonGroup {
+  private List<PersonList> lists;
   
-  public List<Person> getChilds() {
-    return this.childs;
+  public List<PersonList> getLists() {
+    return this.lists;
   }
   
-  public void setChilds(final List<Person> childs) {
-    List<Person> _oldValue = this.childs;
-    this.childs = childs;
-    _propertyChangeSupport.firePropertyChange("childs", _oldValue, childs);
+  public void setLists(final List<PersonList> lists) {
+    List<PersonList> _oldValue = this.lists;
+    this.lists = lists;
+    _propertyChangeSupport.firePropertyChange("lists", _oldValue, lists);
   }
   
   private PropertyChangeSupport _propertyChangeSupport = new PropertyChangeSupport(this);

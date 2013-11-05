@@ -3,6 +3,23 @@ package cz.robotron.examples.xtend
 import java.util.List
 
 class TestData {
+	def static PersonGroup getRoot() {
+
+		return
+		new PersonGroup => [
+			lists = newArrayList(
+				new PersonList => [
+					name = 'Berechnungen'
+					persons = getPersonData
+				],
+				new PersonList => [
+					name = 'Second'
+					persons = getPersonData
+				])
+		]
+
+	}
+
 	def static List<Person> getPersonData() {
 
 		var list = newArrayList()

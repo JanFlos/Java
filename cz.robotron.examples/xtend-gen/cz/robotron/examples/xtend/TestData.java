@@ -2,6 +2,8 @@ package cz.robotron.examples.xtend;
 
 import cz.robotron.examples.xtend.Address;
 import cz.robotron.examples.xtend.Person;
+import cz.robotron.examples.xtend.PersonGroup;
+import cz.robotron.examples.xtend.PersonList;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
@@ -10,6 +12,35 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
 @SuppressWarnings("all")
 public class TestData {
+  public static PersonGroup getRoot() {
+    PersonGroup _personGroup = new PersonGroup();
+    final Procedure1<PersonGroup> _function = new Procedure1<PersonGroup>() {
+      public void apply(final PersonGroup it) {
+        PersonList _personList = new PersonList();
+        final Procedure1<PersonList> _function = new Procedure1<PersonList>() {
+          public void apply(final PersonList it) {
+            it.setName("Berechnungen");
+            List<Person> _personData = TestData.getPersonData();
+            it.setPersons(_personData);
+          }
+        };
+        PersonList _doubleArrow = ObjectExtensions.<PersonList>operator_doubleArrow(_personList, _function);
+        PersonList _personList_1 = new PersonList();
+        final Procedure1<PersonList> _function_1 = new Procedure1<PersonList>() {
+          public void apply(final PersonList it) {
+            it.setName("Second");
+            List<Person> _personData = TestData.getPersonData();
+            it.setPersons(_personData);
+          }
+        };
+        PersonList _doubleArrow_1 = ObjectExtensions.<PersonList>operator_doubleArrow(_personList_1, _function_1);
+        ArrayList<PersonList> _newArrayList = CollectionLiterals.<PersonList>newArrayList(_doubleArrow, _doubleArrow_1);
+        it.setLists(_newArrayList);
+      }
+    };
+    return ObjectExtensions.<PersonGroup>operator_doubleArrow(_personGroup, _function);
+  }
+  
   public static List<Person> getPersonData() {
     ArrayList<Person> list = CollectionLiterals.<Person>newArrayList();
     Person _person = new Person();
